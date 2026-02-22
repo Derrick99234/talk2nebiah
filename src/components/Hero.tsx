@@ -74,9 +74,15 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="relative h-[400px] md:h-[500px] w-full"
         >
-          {/* Abstract representation of connection/healing since we can't fetch external images easily without risk of breakage */}
           <div className="relative w-full h-full bg-linear-to-tr from-mint to-mint-medium rounded-4xl overflow-hidden shadow-2xl flex items-center justify-center">
-            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+            <div
+              className="absolute inset-0 opacity-15"
+              style={{
+                backgroundImage:
+                  'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.55) 1px, transparent 0)',
+                backgroundSize: '18px 18px',
+              }}
+            />
             <div className="text-white text-center p-8">
               <svg
                 className="w-32 h-32 mx-auto mb-6 opacity-90"
