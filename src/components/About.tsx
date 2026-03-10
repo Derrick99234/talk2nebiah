@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Heart, Users, Sparkles } from "lucide-react";
+import { Heart, MessageCircle, Sparkles } from "lucide-react";
 
 export default function About() {
   const features = [
@@ -12,10 +12,10 @@ export default function About() {
         "We listen without judgment, offering a safe harbor for your thoughts.",
     },
     {
-      icon: <Users className="w-6 h-6 text-mint" />,
-      title: "Community First",
+      icon: <MessageCircle className="w-6 h-6 text-mint" />,
+      title: "Chat-Based Support",
       description:
-        "Connect with others who understand your journey and share similar experiences.",
+        "Private, text-based sessions designed to help you talk through what you’re facing and receive supportive guidance.",
     },
     {
       icon: <Sparkles className="w-6 h-6 text-mint" />,
@@ -50,26 +50,41 @@ export default function About() {
               <p>
                 Talk2Nebiah was founded on a simple but powerful belief: no one
                 should have to suffer in silence. Mental health is a universal
-                human experience, affecting everyone from children to adults.
+                human experience that touches everyone—from children to adults,
+                from parents to young people finding their way in life.
               </p>
               <p>
                 Our mission is to break the stigma surrounding mental health by
-                creating a space for honest, judgment-free conversations. We are
-                not about clinical diagnoses or prescriptions. We are about
-                shared human experiences, practical coping mechanisms, and the
-                power of community.
+                creating a safe space for honest, judgment-free conversations.
+                Talk2Nebiah is not a platform for clinical diagnosis or medical
+                prescriptions. Instead, it is a supportive space where people
+                can learn practical coping techniques, talk through real-life
+                challenges, and receive thoughtful guidance in difficult
+                moments.
+              </p>
+              <p>
+                Whether you are going through anxiety, postpartum depression,
+                emotional stress, or simply need someone to talk to, you are not
+                alone. Through our 24/7 one-on-one chat support, you can speak
+                privately with someone who will listen, offer encouragement, and
+                share practical tools that may help you navigate what you’re
+                experiencing.
+              </p>
+              <p>
+                Sometimes, what people need most is a safe space to be heard,
+                understood, and supported without judgment—and that is the heart
+                of Talk2Nebiah.
               </p>
             </div>
 
             <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Stats or trust indicators could go here */}
               <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
                 <p className="text-3xl font-bold text-mint-dark">100%</p>
                 <p className="text-sm text-gray-500">Confidential & Safe</p>
               </div>
               <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
                 <p className="text-3xl font-bold text-mint-dark">24/7</p>
-                <p className="text-sm text-gray-500">Community Access</p>
+                <p className="text-sm text-gray-500">Chat Support</p>
               </div>
             </div>
           </motion.div>
