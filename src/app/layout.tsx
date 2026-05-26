@@ -1,16 +1,27 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { DashboardProvider } from "@/context/DashboardContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Talk2Nebiah | Safe Space for Real Conversations",
-  description: "Talk2Nebiah is a supportive community for mental health, stress, anxiety, and emotional burnout. Join us for judgment-free conversations and peer support.",
-  keywords: ["mental health", "anxiety support", "depression help", "peer support", "Talk2Nebiah", "safe space", "emotional wellness"],
+  description:
+    "Talk2Nebiah is a supportive community for mental health, stress, anxiety, and emotional burnout. Join us for judgment-free conversations and peer support.",
+  keywords: [
+    "mental health",
+    "anxiety support",
+    "depression help",
+    "peer support",
+    "Talk2Nebiah",
+    "safe space",
+    "emotional wellness",
+  ],
   openGraph: {
     title: "Talk2Nebiah | Safe Space for Real Conversations",
-    description: "A safe space for real conversations about real struggles. Join our supportive community.",
+    description:
+      "A safe space for real conversations about real struggles. Join our supportive community.",
     type: "website",
     locale: "en_US",
     siteName: "Talk2Nebiah",
@@ -29,9 +40,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className={`${inter.className} antialiased selection:bg-mint selection:text-white`}>
-        {children}
+      <head></head>
+      <body
+        className={`${inter.className} antialiased selection:bg-mint selection:text-white`}
+      >
+        <DashboardProvider>
+
+          {children}
+        </DashboardProvider>
       </body>
     </html>
   );
 }
+

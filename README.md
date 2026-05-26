@@ -20,6 +20,25 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Production Setup
+
+This project is configured for production with Paystack and WhatsApp Business API integration.
+
+To deploy, ensure you have set all the required environment variables listed in `REQUIRED_ENV_VARS.md`.
+
+### Prerequisites
+- PostgreSQL database
+- Paystack Account (Public & Secret Keys)
+- WhatsApp Business API (Phone Number ID, Access Token)
+- AI Provider API Key (OpenAI/Gemini)
+
+### Deployment
+1. Set up your environment variables.
+2. Run Prisma migrations: `npx prisma migrate deploy`
+3. Build and start the app: `npm run build && npm start`
+
+---
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
