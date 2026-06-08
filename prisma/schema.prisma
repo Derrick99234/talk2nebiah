@@ -12,6 +12,19 @@ generator client {
    passwordHash String
  }
 
+ model GlobalSettings {
+   id               String   @id @default("current")
+   singleNaira      Float    @default(15000)
+   singleUsd        Float    @default(20)
+   monthlyNaira     Float    @default(120000)
+   monthlyUsd       Float    @default(150)
+   aiSystemPrompt   String   @db.Text
+   whatsappPhoneId  String?
+   whatsappToken    String?
+   whatsappVerifyToken String?
+   updatedAt        DateTime @updatedAt
+ }
+
  model User {
    id             String    @id @default(cuid())
    name           String?

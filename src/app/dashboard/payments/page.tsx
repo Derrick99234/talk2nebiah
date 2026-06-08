@@ -81,10 +81,10 @@ export default function PaymentsConsole() {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-12">
+    <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 pb-12">
       
       {/* LEFT & CENTER PANEL: PAYMENTS LIST TABLE */}
-      <div className="lg:col-span-2 space-y-6">
+      <div className="xl:col-span-2 space-y-6 order-2 xl:order-1">
         
         {/* REVENUE STATS CARDS */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -110,9 +110,9 @@ export default function PaymentsConsole() {
         </div>
 
         {/* PAYMENTS LIST CONTAINER */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-x-auto shadow-xl">
           
-          <div className="p-4 border-b border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+          <div className="p-4 border-b border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 min-w-[800px]">
             <h3 className="font-bold text-white text-base">Transactions Ledger</h3>
             
             <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
@@ -156,7 +156,7 @@ export default function PaymentsConsole() {
             </div>
           </div>
 
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-left border-collapse min-w-[800px]">
             <thead>
               <tr className="border-b border-slate-800 bg-slate-850/50 text-[10px] uppercase font-bold text-slate-400 tracking-wider">
                 <th className="p-4 pl-6 text-xs">Date</th>
@@ -201,8 +201,8 @@ export default function PaymentsConsole() {
 
       </div>
 
-      {/* RIGHT PANEL: PRICE ADJUSTER */}
-      <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl flex flex-col justify-between h-full">
+      {/* RIGHT PANEL: PRICE CONTROLS */}
+      <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl flex flex-col justify-between h-full order-1 xl:order-2">
         
         <div className="space-y-6">
           <div className="flex items-center gap-2 text-white font-bold text-lg border-b border-slate-800 pb-3">

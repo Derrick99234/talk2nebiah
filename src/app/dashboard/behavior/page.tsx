@@ -156,10 +156,10 @@ export default function BehaviorSettings() {
 
   // 2. UNLOCKED VIEW
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pb-12">
+    <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 pb-12 relative">
       
-      {/* LEFT COLUMN: AI PARAMETERS FORM */}
-      <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl flex flex-col justify-between space-y-6">
+      {/* 1. CONFIGURATION FORM */}
+      <div className="bg-slate-900 border border-slate-800 p-8 rounded-3xl space-y-8 shadow-xl">
         <div className="space-y-6">
           <div className="flex items-center justify-between border-b border-slate-800 pb-3">
             <div className="flex items-center gap-2 text-white font-bold text-lg">

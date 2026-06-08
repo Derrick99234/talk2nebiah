@@ -83,8 +83,8 @@ export default function InsightsTracker() {
       </div>
 
       {/* SESSIONS TABLE */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-        <table className="w-full text-left border-collapse">
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-x-auto shadow-xl">
+        <table className="w-full text-left border-collapse min-w-[800px]">
           <thead>
             <tr className="border-b border-slate-800 bg-slate-850/50 text-[10px] uppercase font-bold text-slate-400 tracking-wider">
               <th className="p-4 pl-6">Start Date</th>

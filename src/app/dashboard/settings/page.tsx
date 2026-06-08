@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 
 export default function SettingsConsole() {
-  const { whatsappConfig, updateWhatsAppConfig, currency, setCurrency } = useDashboard();
+  const { whatsappConfig, updateWhatsAppConfig } = useDashboard();
   
   // WhatsApp settings state
   const [phoneNumberId, setPhoneNumberId] = useState<string>(whatsappConfig.phoneNumberId);
@@ -21,10 +21,6 @@ export default function SettingsConsole() {
   const [webhookUrl, setWebhookUrl] = useState<string>(whatsappConfig.webhookUrl);
   
   const [saveSuccess, setSaveSuccess] = useState<boolean>(false);
-
-  // Preference switches (local state for mock settings)
-  const [notifications, setNotifications] = useState<boolean>(true);
-  const [emailAlerts, setEmailAlerts] = useState<boolean>(false);
 
   const handleSaveWhatsApp = (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,163 +34,74 @@ export default function SettingsConsole() {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pb-12">
+    <div className="max-w-4xl pb-12">
       
-      {/* LEFT COLUMN: WHATSAPP API GATEWAY KEYS */}
-      <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl flex flex-col justify-between space-y-6">
+      {/* WHATSAPP API GATEWAY KEYS */}
+      <div className="bg-slate-900 border border-slate-800 p-8 rounded-3xl space-y-8 shadow-xl">
         <div className="space-y-6">
           
-          <div className="flex items-center gap-2 text-white font-bold text-lg border-b border-slate-800 pb-3">
-            <Key className="w-5 h-5 text-mint" />
-            <span>WhatsApp Business API Settings</span>
+          <div className="flex items-center gap-3 text-white font-bold text-xl border-b border-slate-800 pb-5">
+            <div className="p-2 bg-mint/10 rounded-lg">
+              <Key className="w-6 h-6 text-mint" />
+            </div>
+            <span>WhatsApp Business API Configuration</span>
           </div>
 
-          <form onSubmit={handleSaveWhatsApp} className="space-y-4">
+          <form onSubmit={handleSaveWhatsApp} className="grid grid-cols-1 md:grid-cols-2 gap-6">
             
-            <div className="space-y-1.5">
-              <label className="text-xs text-slate-400 font-semibold uppercase tracking-wider block">Phone Number ID</label>
+            <div className="space-y-2 md:col-span-1">
+              <label className="text-xs text-slate-400 font-bold uppercase tracking-widest block ml-1">Phone Number ID</label>
               <input 
                 type="text" 
                 value={phoneNumberId}
                 onChange={(e) => setPhoneNumberId(e.target.value)}
                 placeholder="e.g. 109283746592834"
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-xs text-slate-200 font-mono focus:outline-none focus:border-mint"
+                className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-5 py-4 text-sm text-slate-200 font-mono focus:outline-none focus:border-mint focus:ring-4 focus:ring-mint/5 transition-all"
               />
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-xs text-slate-400 font-semibold uppercase tracking-wider block">WhatsApp System Token</label>
-              <input 
-                type="password" 
-                value={accessToken}
-                onChange={(e) => setAccessToken(e.target.value)}
-                placeholder="EAAG3k0ZA2n...WHATSAPP_SECRET_TOKEN"
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-xs text-slate-200 font-mono focus:outline-none focus:border-mint"
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="text-xs text-slate-400 font-semibold uppercase tracking-wider block">Webhook Verification URL</label>
+            <div className="space-y-2 md:col-span-1">
+              <label className="text-xs text-slate-400 font-bold uppercase tracking-widest block ml-1">Webhook Verification URL</label>
               <input 
                 type="text" 
                 value={webhookUrl}
                 onChange={(e) => setWebhookUrl(e.target.value)}
                 placeholder="https://talk2nebiah.com/api/whatsapp/webhook"
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-xs text-slate-200 font-mono focus:outline-none focus:border-mint"
+                className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-5 py-4 text-sm text-slate-200 font-mono focus:outline-none focus:border-mint focus:ring-4 focus:ring-mint/5 transition-all"
               />
             </div>
 
-            <button 
-              type="submit"
-              className="bg-mint hover:bg-mint-dark text-white font-bold px-6 py-3 rounded-xl text-xs transition-all flex items-center gap-1.5 shadow-lg shadow-mint/15 mt-2"
-            >
-              {saveSuccess ? 'WhatsApp Credentials Saved!' : 'Save Credentials'}
-              <Save className="w-3.5 h-3.5" />
-            </button>
+            <div className="space-y-2 md:col-span-2">
+              <label className="text-xs text-slate-400 font-bold uppercase tracking-widest block ml-1">System Access Token</label>
+              <input 
+                type="password" 
+                value={accessToken}
+                onChange={(e) => setAccessToken(e.target.value)}
+                placeholder="EAAG3k0ZA2n...WHATSAPP_SECRET_TOKEN"
+                className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-5 py-4 text-sm text-slate-200 font-mono focus:outline-none focus:border-mint focus:ring-4 focus:ring-mint/5 transition-all"
+              />
+            </div>
+
+            <div className="md:col-span-2 pt-2">
+              <button 
+                type="submit"
+                className="w-full md:w-auto bg-mint hover:bg-mint-dark text-white font-bold px-10 py-4 rounded-2xl text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-mint/20 active:scale-[0.98]"
+              >
+                {saveSuccess ? 'Configuration Saved!' : 'Save Production Credentials'}
+                <Save className="w-4 h-4" />
+              </button>
+            </div>
 
           </form>
 
         </div>
 
-        <div className="text-[10px] text-slate-500 bg-slate-950 p-3 rounded-xl border border-slate-850/60 leading-relaxed mt-6">
-          Credentials are referenced by outgoing WhatsApp dispatch services and incoming webhook parsing logic when forwarding client texts to the dashboard inbox.
-        </div>
-      </div>
-
-      {/* RIGHT COLUMN: SIMULATOR & LOCATIONS */}
-      <div className="space-y-6">
-        
-        {/* Geolocation Tester Card */}
-        <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-4 shadow-lg">
-          
-          <div className="flex items-center gap-2 text-white font-bold text-lg border-b border-slate-800 pb-3">
-            <MapPin className="w-5 h-5 text-mint" />
-            <span>Simulator Location Controls</span>
-          </div>
-
-          <p className="text-xs text-slate-400 leading-relaxed">
-            Override the client geolocation manually to preview how the pricing structure, billing calculations, and Naira vs USD currency views update for users globally:
+        <div className="flex gap-4 p-5 bg-slate-950/50 rounded-2xl border border-slate-800/50">
+          <ShieldCheck className="w-5 h-5 text-slate-500 shrink-0 mt-0.5" />
+          <p className="text-xs text-slate-500 leading-relaxed">
+            These credentials grant access to your WhatsApp Business API. They are used for processing incoming patient messages and dispatching AI responses. Ensure they are kept secure and updated in your production environment variables.
           </p>
-
-          <div className="grid grid-cols-2 gap-4 pt-2">
-            <button
-              onClick={() => setCurrency('NGN')}
-              className={`p-4 rounded-xl border flex flex-col justify-between text-left h-24 transition-all ${
-                currency === 'NGN'
-                  ? 'bg-mint/10 border-mint text-mint shadow-md'
-                  : 'bg-slate-950 border-slate-850 text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              <span className="text-xs font-bold">Nigeria (Naira view)</span>
-              <span className="text-xl font-extrabold font-mono mt-2">₦ NGN</span>
-            </button>
-
-            <button
-              onClick={() => setCurrency('USD')}
-              className={`p-4 rounded-xl border flex flex-col justify-between text-left h-24 transition-all ${
-                currency === 'USD'
-                  ? 'bg-mint/10 border-mint text-mint shadow-md'
-                  : 'bg-slate-950 border-slate-850 text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              <span className="text-xs font-bold">Global (USD view)</span>
-              <span className="text-xl font-extrabold font-mono mt-2">$ USD</span>
-            </button>
-          </div>
         </div>
-
-        {/* Preference Switches Card */}
-        <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-4 shadow-lg">
-          
-          <div className="flex items-center gap-2 text-white font-bold text-lg border-b border-slate-800 pb-3">
-            <Settings className="w-5 h-5 text-mint" />
-            <span>System Configurations</span>
-          </div>
-
-          <div className="space-y-4 text-sm">
-            
-            {/* Preference 1 */}
-            <div className="flex items-center justify-between">
-              <div>
-                <h4 className="font-semibold text-slate-200 text-xs">Desktop Notifications</h4>
-                <p className="text-[10px] text-slate-500 mt-0.5">Show browser notifications when new messages arrive.</p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setNotifications(!notifications)}
-                className={`w-10 h-5.5 rounded-full transition-colors relative focus:outline-none ${
-                  notifications ? 'bg-mint' : 'bg-slate-850'
-                }`}
-              >
-                <span className={`w-3.5 h-3.5 rounded-full bg-white absolute top-1 transition-transform ${
-                  notifications ? 'right-1' : 'left-1'
-                }`} />
-              </button>
-            </div>
-
-            {/* Preference 2 */}
-            <div className="flex items-center justify-between">
-              <div>
-                <h4 className="font-semibold text-slate-200 text-xs">Email Daily Digests</h4>
-                <p className="text-[10px] text-slate-500 mt-0.5">Send a summary of resolved sessions and billing metrics daily.</p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setEmailAlerts(!emailAlerts)}
-                className={`w-10 h-5.5 rounded-full transition-colors relative focus:outline-none ${
-                  emailAlerts ? 'bg-mint' : 'bg-slate-850'
-                }`}
-              >
-                <span className={`w-3.5 h-3.5 rounded-full bg-white absolute top-1 transition-transform ${
-                  emailAlerts ? 'right-1' : 'left-1'
-                }`} />
-              </button>
-            </div>
-
-          </div>
-
-        </div>
-
       </div>
 
     </div>

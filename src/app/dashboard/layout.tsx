@@ -43,8 +43,8 @@ export default function DashboardLayout({
   return (
     <div className="flex h-screen bg-slate-950 text-slate-100 overflow-hidden font-sans">
       
-      {/* SIDEBAR */}
-      <aside className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col justify-between shrink-0">
+      {/* SIDEBAR - Desktop */}
+      <aside className="hidden lg:flex w-64 bg-slate-900 border-r border-slate-800 flex-col justify-between shrink-0">
         <div>
           {/* Logo */}
           <div className="p-6 border-b border-slate-800 flex items-center gap-3">
@@ -90,7 +90,7 @@ export default function DashboardLayout({
             Public Website
           </Link>
           <div className="flex items-center justify-between px-4 py-3 text-xs text-slate-500 border-t border-slate-800/60 pt-4">
-            <span className="font-mono">v1.0.0 (Beta)</span>
+            <span className="font-mono">v1.0.0</span>
             <button className="flex items-center gap-1 hover:text-rose-400 transition-colors">
               <LogOut className="w-3.5 h-3.5" /> Log out
             </button>
@@ -98,13 +98,17 @@ export default function DashboardLayout({
         </div>
       </aside>
 
-      {/* MAIN CONTAINER */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      {/* MAIN CONTENT AREA */}
+      <main className="flex-1 flex flex-col h-full overflow-hidden">
         
         {/* TOP HEADER */}
-        <header className="h-16 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-8 shrink-0">
-          <div>
-            <h2 className="text-xl font-bold text-white">{getPageTitle()}</h2>
+        <header className="h-16 border-b border-slate-800 bg-slate-900/40 flex items-center justify-between px-6 shrink-0">
+          <div className="flex items-center gap-4">
+            {/* Mobile Menu Toggle (Simplified for now) */}
+            <div className="lg:hidden p-2 bg-slate-800 rounded-lg">
+              <Sparkles className="w-5 h-5 text-mint" />
+            </div>
+            <h2 className="text-lg font-bold text-white tracking-tight">{getPageTitle()}</h2>
           </div>
 
           <div className="flex items-center gap-6">
@@ -164,8 +168,7 @@ export default function DashboardLayout({
             {children}
           </div>
         </main>
-      </div>
-
+      </main>
     </div>
   );
 }

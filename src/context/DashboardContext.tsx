@@ -99,8 +99,8 @@ interface DashboardContextType {
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined);
 
 export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currency, setCurrencyState] = useState<'NGN' | 'USD'>('NGN');
-  const [detectedCountry, setDetectedCountry] = useState<string>('Nigeria');
+  const [currency, setCurrencyState] = useState<'NGN' | 'USD'>('USD');
+  const [detectedCountry, setDetectedCountry] = useState<string>('Global');
   const [patients, setPatients] = useState<Patient[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [sessions, setSessions] = useState<Session[]>([]);
@@ -108,33 +108,41 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [loading, setLoading] = useState(true);
 
   const [pricing, setPricing] = useState<PricingConfig>({
-    singleNaira: Number(process.env.NEXT_PUBLIC_SINGLE_NAIRA) || 15000,
-    singleUsd: Number(process.env.NEXT_PUBLIC_SINGLE_USD) || 20,
-    monthlyNaira: Number(process.env.NEXT_PUBLIC_MONTHLY_NAIRA) || 120000,
-    monthlyUsd: Number(process.env.NEXT_PUBLIC_MONTHLY_USD) || 150
+    singleNaira: 15000,
+    singleUsd: 20,
+    monthlyNaira: 120000,
+    monthlyUsd: 150
   });
 
   const [aiBehavior, setAiBehavior] = useState<AiBehaviorConfig>({
-    prompt: process.env.NEXT_PUBLIC_AI_SYSTEM_PROMPT || '',
+    prompt: '',
     tone: 'compassionate',
     safetyThreshold: 'high',
     crisisEscalation: true
   });
 
   const [whatsappConfig, setWhatsappConfig] = useState<WhatsAppConfig>({
-    phoneNumberId: process.env.NEXT_PUBLIC_WHATSAPP_PHONE_NUMBER_ID || '',
-    accessToken: process.env.NEXT_PUBLIC_WHATSAPP_ACCESS_TOKEN || '',
-    webhookUrl: process.env.NEXT_PUBLIC_WHATSAPP_WEBHOOK_URL || ''
+    phoneNumberId: '',
+    accessToken: '',
+    webhookUrl: ''
   });
 
   // Fetch data from API
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [paymentsRes, convosRes] = await Promise.all([
+      const [paymentsRes, convosRes, configRes] = await Promise.all([
         fetch('/api/dashboard/payments'),
-        fetch('/api/dashboard/conversations')
+        fetch('/api/dashboard/conversations'),
+        fetch('/api/dashboard/config')
       ]);
+
+      if (configRes.ok) {
+        const configData = await configRes.json();
+        setPricing(configData.pricing);
+        setAiBehavior(configData.aiBehavior);
+        setWhatsappConfig(configData.whatsappConfig);
+      }
 
       if (paymentsRes.ok) {
         const paymentsData = await paymentsRes.json();
@@ -217,8 +225,8 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         }
       }
     } catch (e) {
-      setDetectedCountry('Nigeria');
-      setCurrency('NGN');
+      setDetectedCountry('Global');
+      setCurrency('USD');
     }
   };
 
@@ -241,16 +249,46 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     setSessions(prev => prev.map(s => s.id === sessionId ? { ...s, status: s.status === 'ONGOING' ? 'RESOLVED' : 'ONGOING' } : s));
   };
 
-  const updatePricing = (config: Partial<PricingConfig>) => {
-    setPricing(prev => ({ ...prev, ...config }));
+  const updatePricing = async (config: Partial<PricingConfig>) => {
+    const newPricing = { ...pricing, ...config };
+    setPricing(newPricing);
+    try {
+      await fetch('/api/dashboard/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pricing: newPricing, aiBehavior, whatsappConfig })
+      });
+    } catch (error) {
+      console.error('Failed to update pricing on server:', error);
+    }
   };
 
-  const updateAiBehavior = (config: Partial<AiBehaviorConfig>) => {
-    setAiBehavior(prev => ({ ...prev, ...config }));
+  const updateAiBehavior = async (config: Partial<AiBehaviorConfig>) => {
+    const newAiBehavior = { ...aiBehavior, ...config };
+    setAiBehavior(newAiBehavior);
+    try {
+      await fetch('/api/dashboard/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pricing, aiBehavior: newAiBehavior, whatsappConfig })
+      });
+    } catch (error) {
+      console.error('Failed to update AI behavior on server:', error);
+    }
   };
 
-  const updateWhatsAppConfig = (config: Partial<WhatsAppConfig>) => {
-    setWhatsappConfig(prev => ({ ...prev, ...config }));
+  const updateWhatsAppConfig = async (config: Partial<WhatsAppConfig>) => {
+    const newWhatsappConfig = { ...whatsappConfig, ...config };
+    setWhatsappConfig(newWhatsappConfig);
+    try {
+      await fetch('/api/dashboard/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pricing, aiBehavior, whatsappConfig: newWhatsappConfig })
+      });
+    } catch (error) {
+      console.error('Failed to update WhatsApp config on server:', error);
+    }
   };
 
   return (
