@@ -148,7 +148,7 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         const extractedMessages: Message[] = [];
         const patientMap = new Map<string, Patient>();
 
-        convosData.forEach((session: any) => {
+        sessionsData.forEach((session: any) => {
           if (!patientMap.has(session.patientId)) {
             const lastMsg = session.messages[session.messages.length - 1];
             const patient: Patient = {
