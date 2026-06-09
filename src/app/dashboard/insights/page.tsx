@@ -44,7 +44,7 @@ export default function InsightsTracker() {
     if (!rating) return <span className="text-slate-600">-</span>;
     return (
       <div className="flex gap-0.5 text-amber-400">
-        {[...Array(5)].map((_, i) => (
+        {Array.from({ length: 5 }, (_, i) => (
           <Star 
             key={i} 
             className={`w-3.5 h-3.5 ${i < rating ? 'fill-amber-400' : 'text-slate-700'}`} 
