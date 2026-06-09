@@ -20,13 +20,13 @@ export default function Footer() {
               A safe space for real conversations about real struggles. Join our community and find your path to healing.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-mint hover:text-white transition-all">
+              <a href="https://instagram.com/talk2nebiah" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-mint hover:text-white transition-all">
                 <Instagram size={18} />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-mint hover:text-white transition-all">
+              <a href="https://twitter.com/talk2nebiah" target="_blank" rel="noopener noreferrer" aria-label="Twitter" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-mint hover:text-white transition-all">
                 <Twitter size={18} />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-mint hover:text-white transition-all">
+              <a href="https://facebook.com/talk2nebiah" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-mint hover:text-white transition-all">
                 <Facebook size={18} />
               </a>
             </div>
@@ -46,9 +46,9 @@ export default function Footer() {
             <div>
               <h4 className="text-lg font-bold mb-6 text-white">Legal</h4>
               <ul className="space-y-4">
-                <li><a href="#" className="text-gray-400 hover:text-mint transition-colors">Privacy Policy</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-mint transition-colors">Terms of Service</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-mint transition-colors">Disclaimer</a></li>
+                <li><a href="/privacy" className="text-gray-400 hover:text-mint transition-colors">Privacy Policy</a></li>
+                <li><a href="/terms" className="text-gray-400 hover:text-mint transition-colors">Terms of Service</a></li>
+                <li><a href="/disclaimer" className="text-gray-400 hover:text-mint transition-colors">Disclaimer</a></li>
               </ul>
             </div>
           </div>

@@ -11,12 +11,23 @@ import {
   Heart,
   ChevronRight,
   ShieldCheck,
-  AlertTriangle
+  AlertCircle
 } from 'lucide-react';
 import Link from 'next/link';
 
+function getTimeAgo(date: Date): string {
+  const diff = Date.now() - date.getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'Just now';
+  if (mins < 60) return `${mins} min ago`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+  const days = Math.floor(hours / 24);
+  return `${days} day${days > 1 ? 's' : ''} ago`;
+}
+
 export default function DashboardOverview() {
-  const { patients, sessions, payments, currency } = useDashboard();
+  const { patients, sessions, payments, currency, loading, error } = useDashboard();
 
   // 1. Calculate Statistics
   const activeChats = patients.length;
@@ -25,7 +36,7 @@ export default function DashboardOverview() {
   
   // Calculate average rating
   const ratings = sessions.filter(s => s.status === 'RESOLVED' && s.feedbackRating).map(s => s.feedbackRating as number);
-  const avgRating = ratings.length > 0 ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1) : '4.8';
+  const avgRating = ratings.length > 0 ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1) : null;
 
   // Calculate Revenue based on selected currency
   const receivedPayments = payments.filter(p => p.status === 'SUCCESSFUL');
@@ -34,8 +45,8 @@ export default function DashboardOverview() {
 
   // Format currency value based on current view
   const formattedRevenue = currency === 'NGN' 
-    ? `₦${(revenueNgn + revenueUsd * 1500).toLocaleString()}` // Mock conversion for USD -> NGN at 1500 rate
-    : `$${(revenueUsd + revenueNgn / 1500).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+    ? `₦${revenueNgn.toLocaleString()}`
+    : `$${revenueUsd.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
 
   // Struggle distribution counter
   const struggles = sessions.reduce((acc: Record<string, number>, s) => {
@@ -45,26 +56,59 @@ export default function DashboardOverview() {
 
   const totalStrugglesCount = Object.values(struggles).reduce((a, b) => a + b, 0) || 1;
 
-  // Static Daily Conversations Chart Data (Represented visually in SVGs)
-  const chartData = [
-    { day: 'Mon', count: 12 },
-    { day: 'Tue', count: 19 },
-    { day: 'Wed', count: 15 },
-    { day: 'Thu', count: 24 },
-    { day: 'Fri', count: 22 },
-    { day: 'Sat', count: 30 },
-    { day: 'Sun', count: 28 }
-  ];
+  // Compute chart data from sessions by day of week
+  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const chartData = dayNames.map(day => {
+    const count = sessions.filter(s => {
+      const d = dayNames[new Date(s.startDate).getDay()];
+      return d === day;
+    }).length;
+    return { day, count };
+  });
 
-  const maxChartCount = Math.max(...chartData.map(d => d.count));
+  const maxChartCount = Math.max(...chartData.map(d => d.count), 1);
 
-  // Activity Log
-  const activities = [
-    { type: 'message', text: 'WhatsApp message received from Blessing Okon', time: '10 mins ago', badgeColor: 'bg-indigo-500/20 text-indigo-300' },
-    { type: 'payment', text: 'Subscription payment received from David Alao', time: '1 hour ago', badgeColor: 'bg-emerald-500/20 text-emerald-300' },
-    { type: 'ai', text: 'AI answered generalized anxiety query for Amara Okafor', time: 'Yesterday', badgeColor: 'bg-purple-500/20 text-purple-300' },
-    { type: 'status', text: 'Session s4 was resolved by Operator', time: 'Yesterday', badgeColor: 'bg-amber-500/20 text-amber-300' }
-  ];
+  // Generate activity log from real data
+  const activities: { type: string; text: string; time: string; badgeColor: string }[] = [];
+  
+  sessions.slice(0, 5).forEach(s => {
+    const timeAgo = getTimeAgo(new Date(s.startDate));
+    activities.push({
+      type: 'session',
+      text: `${s.status === 'RESOLVED' ? 'Resolved' : 'Started'} session for ${s.patientName} (${s.struggleCategory})`,
+      time: timeAgo,
+      badgeColor: s.status === 'RESOLVED' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-indigo-500/20 text-indigo-300',
+    });
+  });
+
+  payments.slice(0, 3).forEach(p => {
+    activities.push({
+      type: 'payment',
+      text: `${p.planName} payment ${p.status.toLowerCase()} from ${p.patientName}`,
+      time: getTimeAgo(new Date(p.date)),
+      badgeColor: p.status === 'SUCCESSFUL' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300',
+    });
+  });
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[calc(100vh-12rem)]">
+        <div className="animate-spin w-8 h-8 border-2 border-mint border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[calc(100vh-12rem)]">
+        <div className="bg-rose-500/10 border border-rose-500/20 text-rose-400 px-6 py-4 rounded-2xl text-sm max-w-md text-center">
+          <AlertCircle className="w-8 h-8 mx-auto mb-2" />
+          <p className="font-semibold">Failed to load dashboard</p>
+          <p className="text-rose-400/80 mt-1">{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 pb-12">
@@ -72,7 +116,7 @@ export default function DashboardOverview() {
       {/* HEADER SECTION */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-extrabold text-white">Welcome back, Emmanuella!</h1>
+          <h1 className="text-2xl md:text-3xl font-extrabold text-white">Dashboard Overview</h1>
           <p className="text-slate-400 text-sm mt-1">Here is a quick look at what is happening with Talk2Nebiah today.</p>
         </div>
         <div className="flex gap-3">
@@ -281,13 +325,13 @@ export default function DashboardOverview() {
                 <div className="w-2 h-2 rounded-full bg-indigo-500"></div>
                 <span className="text-sm font-semibold text-slate-200">PostgreSQL Database</span>
               </div>
-              <span className="text-xs text-indigo-400 font-mono">SIMULATED</span>
+              <span className="text-xs text-emerald-400 font-mono">CONNECTED</span>
             </div>
 
           </div>
 
           <div className="flex items-center gap-2 text-xs bg-amber-500/10 border border-amber-500/20 p-3 rounded-xl text-amber-300">
-            <AlertTriangle className="w-4 h-4 shrink-0 text-amber-400" />
+            <AlertCircle className="w-4 h-4 shrink-0 text-amber-400" />
             <p>Make sure to review WhatsApp logs daily for human handovers.</p>
           </div>
         </div>

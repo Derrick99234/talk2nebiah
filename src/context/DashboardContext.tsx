@@ -74,6 +74,10 @@ interface DashboardContextType {
   sessions: Session[];
   payments: Payment[];
   
+  // Loading / Error
+  loading: boolean;
+  error: string | null;
+
   // Configurations
   pricing: PricingConfig;
   aiBehavior: AiBehaviorConfig;
@@ -98,6 +102,7 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [sessions, setSessions] = useState<Session[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const [pricing, setPricing] = useState<PricingConfig>({
     singleNaira: 15000,
@@ -177,6 +182,7 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       }
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
+      setError('Failed to load dashboard data. Check your connection and try again.');
     } finally {
       setLoading(false);
     }
@@ -217,22 +223,60 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const sendMessage = async (patientId: string, content: string, senderType: 'HUMAN' | 'AI') => {
-    // In production, this would call an API to send via WhatsApp
-    console.log(`Sending message to ${patientId}: ${content} as ${senderType}`);
-    // Refresh data after sending
-    setTimeout(fetchData, 1000);
+    try {
+      // Find the active session for this patient
+      const session = sessions.find(s => s.patientId === patientId && s.status === 'ONGOING');
+      if (!session) {
+        console.error('No active session found for patient', patientId);
+        return;
+      }
+      const res = await fetch('/api/dashboard/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId: session.id, content, senderType }),
+      });
+      if (res.ok) {
+        fetchData();
+      }
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      setError('Failed to send message');
+    }
   };
 
-  const togglePatientStatus = (patientId: string) => {
-    setPatients(prev => prev.map(p => p.id === patientId ? { ...p, status: p.status === 'AI_RESPONDING' ? 'HUMAN_OPERATOR' : 'AI_RESPONDING' } : p));
+  const togglePatientStatus = async (patientId: string) => {
+    const newStatus = patients.find(p => p.id === patientId)?.status === 'AI_RESPONDING' ? 'HUMAN_OPERATOR' : 'AI_RESPONDING';
+    setPatients(prev => prev.map(p => p.id === patientId ? { ...p, status: newStatus } : p));
   };
 
   const updatePatientNotes = async (sessionId: string, notes: string) => {
     setSessions(prev => prev.map(s => s.id === sessionId ? { ...s, notes } : s));
+    try {
+      await fetch(`/api/dashboard/sessions/${sessionId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ notes }),
+      });
+    } catch (error) {
+      console.error('Failed to update notes:', error);
+      setError('Failed to save notes');
+    }
   };
 
   const toggleSessionStatus = async (sessionId: string) => {
-    setSessions(prev => prev.map(s => s.id === sessionId ? { ...s, status: s.status === 'ONGOING' ? 'RESOLVED' : 'ONGOING' } : s));
+    const session = sessions.find(s => s.id === sessionId);
+    const newStatus = session?.status === 'ONGOING' ? 'RESOLVED' : 'ONGOING';
+    setSessions(prev => prev.map(s => s.id === sessionId ? { ...s, status: newStatus } : s));
+    try {
+      await fetch(`/api/dashboard/sessions/${sessionId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+    } catch (error) {
+      console.error('Failed to toggle session status:', error);
+      setError('Failed to update session status');
+    }
   };
 
   const updatePricing = async (config: Partial<PricingConfig>) => {
@@ -273,6 +317,8 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       messages,
       sessions,
       payments,
+      loading,
+      error,
       pricing,
       aiBehavior,
       sendMessage,

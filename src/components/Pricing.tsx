@@ -117,10 +117,11 @@ export default function Pricing() {
 
                 <form onSubmit={handlePaystack} className="space-y-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Full Name</label>
+                    <label htmlFor="pricing-name" className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Full Name</label>
                     <div className="relative">
                       <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                       <input 
+                        id="pricing-name"
                         required
                         type="text" 
                         value={userData.name}
@@ -132,10 +133,11 @@ export default function Pricing() {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Email Address</label>
+                    <label htmlFor="pricing-email" className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Email Address</label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                       <input 
+                        id="pricing-email"
                         required
                         type="email" 
                         value={userData.email}

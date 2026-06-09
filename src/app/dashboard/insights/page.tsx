@@ -210,7 +210,7 @@ export default function InsightsTracker() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-900/40 p-4 border border-slate-800 rounded-2xl text-xs text-slate-400 items-center">
         <div className="flex items-center gap-2">
           <AlertCircle className="w-5 h-5 text-mint shrink-0" />
-          <p>Resolving a session automatically assigns a random mockup star rating from the patient to simulate feedback loops.</p>
+          <p>Resolving a session records the feedback rating provided by the patient during the session.</p>
         </div>
         <div className="text-left md:text-right font-semibold">
           Total Session Records: <span className="text-white font-mono text-sm">{sessions.length}</span>
