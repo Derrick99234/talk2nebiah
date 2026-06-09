@@ -32,11 +32,15 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const ip = request.headers.get('x-forwarded-for') ?? 'unknown';
+    console.log('[WEBHOOK] POST received from IP:', ip);
+
     if (!checkRateLimit(`whatsapp:${ip}`, 30, 60_000)) {
+      console.log('[WEBHOOK] Rate limited:', ip);
       return NextResponse.json({ status: 'rate_limited' }, { status: 429 });
     }
 
     const body = await request.json();
+    console.log('[WEBHOOK] Body keys:', Object.keys(body));
     
     if (body.object === 'whatsapp_business_account') {
       const entry = body.entry?.[0];
@@ -45,34 +49,47 @@ export async function POST(request: Request) {
       const message = value?.messages?.[0];
       const contact = value?.contacts?.[0];
 
+      console.log('[WEBHOOK] Message present:', !!message);
+      console.log('[WEBHOOK] Contact present:', !!contact);
+
       if (message) {
-        const from = message.from; // Sender WhatsApp Number
+        const from = message.from;
         const name = contact?.profile?.name || 'WhatsApp Client';
         let text = '';
         let mediaUrl: string | null = null;
         let transcript: string | null = null;
 
+        console.log('[WEBHOOK] From:', from);
+        console.log('[WEBHOOK] Message type:', message.type);
+
         if (message.type === 'text') {
           text = message.text?.body.trim();
+          console.log('[WEBHOOK] Text received:', text);
         } else if (message.type === 'audio' || message.type === 'voice') {
           mediaUrl = message.audio?.url || message.voice?.url;
-          // Placeholder for transcription logic
           text = "[Audio Message]";
           transcript = "Transcription service would process this audio...";
+          console.log('[WEBHOOK] Audio received, URL:', mediaUrl);
         }
 
-        if (!text && !mediaUrl) return NextResponse.json({ status: 'success' });
+        if (!text && !mediaUrl) {
+          console.log('[WEBHOOK] Empty message, ignoring');
+          return NextResponse.json({ status: 'success' });
+        }
 
         // 1. Find user by WhatsApp Number
         let user = await prisma.user.findUnique({
           where: { whatsappNumber: from },
         });
+        console.log('[WEBHOOK] Existing user found:', !!user);
 
         // 2. Authentication Flow
         if (!user) {
-          // Check if the message is a 32-char hex token (128-bit)
+          console.log('[WEBHOOK] No user found, checking if message is auth token. Text length:', text?.length);
           if (text.length === 32) {
+            console.log('[WEBHOOK] Text is 32 chars, attempting token verification');
             const authToken = await verifyToken(text.toUpperCase());
+            console.log('[WEBHOOK] Token valid:', !!authToken);
             if (authToken) {
               // Valid token! Link user to this WhatsApp number
               user = await prisma.user.update({
