@@ -1,6 +1,23 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
+interface PaymentUser {
+  name: string | null;
+  email: string | null;
+}
+
+interface PaymentWithUser {
+  id: string;
+  userId: string;
+  planName: string;
+  amount: number;
+  currency: string;
+  status: string;
+  createdAt: Date;
+  geoCountry: string | null;
+  user: PaymentUser;
+}
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -18,7 +35,7 @@ export async function GET(request: Request) {
       prisma.payment.count(),
     ]);
 
-    const formattedPayments = payments.map(p => ({
+    const formattedPayments = (payments as PaymentWithUser[]).map(p => ({
       id: p.id,
       patientId: p.userId,
       patientName: p.user.name || p.user.email || 'Unknown',

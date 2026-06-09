@@ -59,7 +59,7 @@ export async function GET(request: Request) {
       notes: s.notes,
       startDate: s.startDate.toISOString(),
       resolvedDate: s.resolvedDate?.toISOString(),
-      messages: s.messages.map(m => ({
+      messages: s.messages.map((m: SessionMessage) => ({
         id: m.id,
         content: m.content,
         senderType: m.senderType,

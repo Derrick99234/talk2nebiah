@@ -129,7 +129,7 @@ export async function POST(request: Request) {
 
         const aiMessages = [
           { role: 'system' as const, content: SYSTEM_PROMPT },
-          ...history.map(m => ({
+          ...history.map((m: { senderType: string; transcript: string | null; content: string | null }) => ({
             role: (m.senderType === 'PATIENT' ? 'user' : 'assistant') as 'user' | 'assistant',
             content: m.transcript || m.content || '',
           })),
