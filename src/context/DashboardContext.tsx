@@ -42,7 +42,7 @@ export interface Payment {
   planName: string;
   amount: number;
   currency: 'NGN' | 'USD';
-  status: 'PENDING' | 'RECEIVED' | 'DECLINED';
+  status: 'PENDING' | 'SUCCESSFUL' | 'FAILED';
   date: string;
   geoCountry: string;
 }

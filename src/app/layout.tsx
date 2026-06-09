@@ -43,6 +43,7 @@ export default function RootLayout({
       <head></head>
       <body
         className={`${inter.className} antialiased selection:bg-mint selection:text-white`}
+        suppressHydrationWarning
       >
         <DashboardProvider>
 

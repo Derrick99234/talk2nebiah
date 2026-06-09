@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useDashboard } from '@/context/DashboardContext';
@@ -24,6 +24,27 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname();
   const { currency, setCurrency, detectedCountry } = useDashboard();
+  const [adminEmail, setAdminEmail] = useState('');
+  const [checking, setChecking] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/auth/me', { credentials: 'include' })
+      .then(r => r.json())
+      .then(data => {
+        if (data.authenticated) {
+          setAdminEmail(data.admin.email);
+        } else {
+          window.location.href = '/login';
+        }
+      })
+      .catch(() => { window.location.href = '/login'; })
+      .finally(() => setChecking(false));
+  }, []);
+
+  async function handleLogout() {
+    await fetch('/api/auth/login', { method: 'DELETE' });
+    window.location.href = '/login';
+  }
 
   const navigation = [
     { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
@@ -34,11 +55,22 @@ export default function DashboardLayout({
     { name: 'Settings', href: '/dashboard/settings', icon: Settings },
   ];
 
-  // Helper to determine the header page title
   const getPageTitle = () => {
     const item = navigation.find(n => n.href === pathname);
     return item ? item.name : 'Dashboard';
   };
+
+  if (checking) {
+    return (
+      <div className="flex h-screen bg-slate-950 items-center justify-center">
+        <div className="animate-spin w-8 h-8 border-2 border-mint border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+
+  const initials = adminEmail
+    ? adminEmail.split('@')[0].split('.').map(s => s[0]).join('').toUpperCase().slice(0, 2)
+    : 'AD';
 
   return (
     <div className="flex h-screen bg-slate-950 text-slate-100 overflow-hidden font-sans">
@@ -46,7 +78,6 @@ export default function DashboardLayout({
       {/* SIDEBAR - Desktop */}
       <aside className="hidden lg:flex w-64 bg-slate-900 border-r border-slate-800 flex-col justify-between shrink-0">
         <div>
-          {/* Logo */}
           <div className="p-6 border-b border-slate-800 flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-mint-dark to-mint flex items-center justify-center shadow-lg shadow-mint/20">
               <Sparkles className="w-5 h-5 text-white" />
@@ -57,7 +88,6 @@ export default function DashboardLayout({
             </div>
           </div>
 
-          {/* Nav Links */}
           <nav className="p-4 space-y-1">
             {navigation.map((item) => {
               const Icon = item.icon;
@@ -80,7 +110,6 @@ export default function DashboardLayout({
           </nav>
         </div>
 
-        {/* Sidebar Footer */}
         <div className="p-4 border-t border-slate-800 space-y-2">
           <Link
             href="/"
@@ -91,7 +120,7 @@ export default function DashboardLayout({
           </Link>
           <div className="flex items-center justify-between px-4 py-3 text-xs text-slate-500 border-t border-slate-800/60 pt-4">
             <span className="font-mono">v1.0.0</span>
-            <button className="flex items-center gap-1 hover:text-rose-400 transition-colors">
+            <button onClick={handleLogout} className="flex items-center gap-1 hover:text-rose-400 transition-colors cursor-pointer">
               <LogOut className="w-3.5 h-3.5" /> Log out
             </button>
           </div>
@@ -104,7 +133,6 @@ export default function DashboardLayout({
         {/* TOP HEADER */}
         <header className="h-16 border-b border-slate-800 bg-slate-900/40 flex items-center justify-between px-6 shrink-0">
           <div className="flex items-center gap-4">
-            {/* Mobile Menu Toggle (Simplified for now) */}
             <div className="lg:hidden p-2 bg-slate-800 rounded-lg">
               <Sparkles className="w-5 h-5 text-mint" />
             </div>
@@ -113,7 +141,6 @@ export default function DashboardLayout({
 
           <div className="flex items-center gap-6">
             
-            {/* Geolocation Currency Switcher */}
             <div className="flex items-center gap-3 bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-full text-xs">
               <div className="flex items-center gap-1.5 text-slate-400">
                 <MapPin className="w-3.5 h-3.5 text-mint" />
@@ -147,22 +174,19 @@ export default function DashboardLayout({
               </div>
             </div>
 
-            {/* Admin Profile */}
             <div className="flex items-center gap-3">
               <div className="text-right">
-                <p className="text-sm font-semibold text-white">E. Okorodudu</p>
-                <p className="text-[10px] text-slate-500">Chief Executive / Admin</p>
+                <p className="text-sm font-semibold text-white">{adminEmail?.split('@')[0] || 'Admin'}</p>
+                <p className="text-[10px] text-slate-500">Administrator</p>
               </div>
               <div className="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 overflow-hidden flex items-center justify-center">
-                {/* Fallback image / Avatar */}
-                <span className="text-sm font-bold text-mint">EO</span>
+                <span className="text-sm font-bold text-mint">{initials}</span>
               </div>
             </div>
             
           </div>
         </header>
 
-        {/* PAGE CONTENT */}
         <main className="flex-1 overflow-y-auto bg-slate-950 p-8">
           <div className="max-w-7xl mx-auto h-full">
             {children}

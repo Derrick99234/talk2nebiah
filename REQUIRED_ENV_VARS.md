@@ -27,5 +27,18 @@ To activate the Talk2Nebiah production system, please configure the following en
 - `NEXT_PUBLIC_MONTHLY_NAIRA`: Price for monthly plan in Naira (e.g., `120000`)
 - `NEXT_PUBLIC_MONTHLY_USD`: Price for monthly plan in USD (e.g., `150`)
 
+## Email (Auth Token Delivery)
+- `SMTP_HOST`: SMTP server hostname (e.g., `smtp.gmail.com`)
+- `SMTP_PORT`: SMTP port (default: `587`)
+- `SMTP_SECURE`: Set to `true` for SSL (port 465), `false` for STARTTLS (default: `false`)
+- `SMTP_USER`: SMTP username (usually your email)
+- `SMTP_PASS`: SMTP password or app password
+- `SMTP_FROM`: Sender email address (default: `noreply@talk2nebiah.com`)
+
+## Admin Authentication
+- `JWT_SECRET`: Secret key used to sign session tokens
+- `ADMIN_EMAIL`: Email address of the initial admin user (used by seed script)
+- `ADMIN_PASSWORD`: Password of the initial admin user (used by seed script)
+
 ---
 **Note:** Ensure all `NEXT_PUBLIC_` variables are available at build time for the frontend.

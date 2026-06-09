@@ -72,7 +72,7 @@ export async function POST(request: Request) {
                 where: { id: authToken.userId },
                 data: { 
                   whatsappNumber: from,
-                  name: user?.name || name 
+                  name,
                 },
               });
               await markTokenAsUsed(authToken.id);

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { prisma } from '@/lib/prisma';
 import { generateAuthToken } from '@/lib/token';
+import { sendAuthTokenEmail } from '@/lib/email';
 
 const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY!;
 
@@ -68,12 +69,7 @@ export async function POST(req: Request) {
       // 3. Generate Auth Token
       const authToken = await generateAuthToken(user.id);
 
-      // In a real production app, you'd send an email here with the token.
-      // For now, we'll just log it. The instruction says:
-      // "generate a unique, time-limited authentication token for the user to access the dedicated WhatsApp number"
-      console.log(`Generated token ${authToken.token} for user ${email}`);
-      
-      // TODO: Send email or SMS with token
+      await sendAuthTokenEmail(email, authToken.token);
     }
 
     return new NextResponse('OK', { status: 200 });
