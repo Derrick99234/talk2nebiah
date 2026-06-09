@@ -27,7 +27,7 @@ export async function GET() {
       totalPatients,
       activeSessions,
       resolvedSessions,
-      revenue: revenue.reduce((acc, curr) => {
+      revenue: revenue.reduce((acc: Record<string, number>, curr) => {
         acc[curr.currency] = curr._sum.amount || 0;
         return acc;
       }, {} as Record<string, number>),

@@ -49,8 +49,8 @@ export async function POST(request: Request) {
         const from = message.from; // Sender WhatsApp Number
         const name = contact?.profile?.name || 'WhatsApp Client';
         let text = '';
-        let mediaUrl = null;
-        let transcript = null;
+        let mediaUrl: string | null = null;
+        let transcript: string | null = null;
 
         if (message.type === 'text') {
           text = message.text?.body.trim();
