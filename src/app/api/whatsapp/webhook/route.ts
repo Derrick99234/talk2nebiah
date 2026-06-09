@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { verifyToken, markTokenAsUsed } from '@/lib/token';
 import { sendWhatsAppMessage } from '@/lib/whatsapp';
 import { generateAIResponse, SYSTEM_PROMPT } from '@/lib/ai';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 // GET verification check from Meta / WhatsApp Business setup
 export async function GET(request: Request) {
@@ -30,6 +31,11 @@ export async function GET(request: Request) {
 // POST webhook updates from WhatsApp API
 export async function POST(request: Request) {
   try {
+    const ip = request.headers.get('x-forwarded-for') ?? 'unknown';
+    if (!checkRateLimit(`whatsapp:${ip}`, 30, 60_000)) {
+      return NextResponse.json({ status: 'rate_limited' }, { status: 429 });
+    }
+
     const body = await request.json();
     
     if (body.object === 'whatsapp_business_account') {
@@ -64,9 +70,8 @@ export async function POST(request: Request) {
 
         // 2. Authentication Flow
         if (!user) {
-          // Check if the message is an 8-character hex token (6 chars hex from my token.ts)
-          // Wait, I used crypto.randomBytes(3).toString('hex') which is 6 chars.
-          if (text.length === 6) {
+          // Check if the message is a 32-char hex token (128-bit)
+          if (text.length === 32) {
             const authToken = await verifyToken(text.toUpperCase());
             if (authToken) {
               // Valid token! Link user to this WhatsApp number

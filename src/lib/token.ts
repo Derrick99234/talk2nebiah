@@ -2,9 +2,7 @@ import { prisma } from './prisma';
 import crypto from 'crypto';
 
 export async function generateAuthToken(userId: string) {
-  // Generate a 6-digit numeric token or a alphanumeric one. 
-  // Given it's for WhatsApp, a shorter alphanumeric or numeric token is easier to type.
-  const token = crypto.randomBytes(3).toString('hex').toUpperCase(); // 6 chars
+  const token = crypto.randomBytes(16).toString('hex').toUpperCase(); // 32 hex chars (128 bits)
   const expiresAt = new Date();
   expiresAt.setHours(expiresAt.getHours() + 24); // 24 hours expiry
 

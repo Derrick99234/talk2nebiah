@@ -45,15 +45,18 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { pricing, aiBehavior } = body;
 
+    const updateData: Record<string, unknown> = {};
+    if (pricing) {
+      if (pricing.singleNaira !== undefined) updateData.singleNaira = pricing.singleNaira;
+      if (pricing.singleUsd !== undefined) updateData.singleUsd = pricing.singleUsd;
+      if (pricing.monthlyNaira !== undefined) updateData.monthlyNaira = pricing.monthlyNaira;
+      if (pricing.monthlyUsd !== undefined) updateData.monthlyUsd = pricing.monthlyUsd;
+    }
+    if (aiBehavior?.prompt !== undefined) updateData.aiSystemPrompt = aiBehavior.prompt;
+
     const updatedSettings = await prisma.globalSettings.upsert({
       where: { id: 'current' },
-      update: {
-        singleNaira: pricing?.singleNaira,
-        singleUsd: pricing?.singleUsd,
-        monthlyNaira: pricing?.monthlyNaira,
-        monthlyUsd: pricing?.monthlyUsd,
-        aiSystemPrompt: aiBehavior?.prompt,
-      },
+      update: updateData,
       create: {
         id: 'current',
         singleNaira: pricing?.singleNaira || 15000,

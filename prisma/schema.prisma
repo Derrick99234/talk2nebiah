@@ -39,16 +39,18 @@ generator client {
    id        String   @id @default(cuid())
    token     String   @unique
    userId    String
-   user      User     @relation(fields: [userId], references: [id])
+   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
    expiresAt DateTime
    usedAt    DateTime?
    createdAt DateTime @default(now())
+
+   @@index([userId])
  }
 
  model Payment {
    id                String   @id @default(cuid())
    userId            String
-   user              User     @relation(fields: [userId], references: [id])
+   user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
    amount            Float
    currency          String   // 'NGN' | 'USD'
    status            String   // 'PENDING' | 'SUCCESSFUL' | 'FAILED'
@@ -57,12 +59,14 @@ generator client {
    geoCountry        String?
    createdAt         DateTime @default(now())
    updatedAt         DateTime @updatedAt
+
+   @@index([userId])
  }
 
  model Session {
    id               String    @id @default(cuid())
    userId           String
-   user             User      @relation(fields: [userId], references: [id])
+   user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
    struggleCategory String
    status           String    @default("ONGOING") // 'ONGOING' | 'RESOLVED'
    feedbackRating   Int?
@@ -70,15 +74,19 @@ generator client {
    startDate        DateTime  @default(now())
    resolvedDate     DateTime?
    messages         Message[]
+
+   @@index([userId])
  }
 
  model Message {
    id         String   @id @default(cuid())
    sessionId  String
-   session    Session  @relation(fields: [sessionId], references: [id])
+   session    Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
    content    String?
    mediaUrl   String?
    transcript String?
    senderType String   // 'PATIENT' | 'AI' | 'HUMAN'
    timestamp  DateTime @default(now())
- }
+
+   @@index([sessionId])
+}

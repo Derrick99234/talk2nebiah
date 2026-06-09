@@ -62,7 +62,7 @@ export async function POST(req: Request) {
           currency: currency,
           status: 'SUCCESSFUL',
           planName: planName,
-          geoCountry: data.gateway_response || 'Unknown',
+          geoCountry: data.authorization?.country_code || 'Unknown',
         },
       });
 

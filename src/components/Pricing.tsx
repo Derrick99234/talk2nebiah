@@ -11,8 +11,21 @@ declare global {
   }
 }
 
+interface PricingData {
+  singleNaira: number;
+  singleUsd: number;
+  monthlyNaira: number;
+  monthlyUsd: number;
+}
+
 export default function Pricing() {
-  const { pricing, currency } = useDashboard();
+  const { currency } = useDashboard();
+  const [pricing, setPricing] = useState<PricingData>({
+    singleNaira: 15000,
+    singleUsd: 20,
+    monthlyNaira: 120000,
+    monthlyUsd: 150,
+  });
   const [loading, setLoading] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<{name: string, amount: number} | null>(null);
@@ -26,6 +39,15 @@ export default function Pricing() {
     return () => {
       document.body.removeChild(script);
     };
+  }, []);
+
+  useEffect(() => {
+    fetch('/api/pricing')
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data) setPricing(data);
+      })
+      .catch(() => {});
   }, []);
 
   const plans = [

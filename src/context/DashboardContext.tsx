@@ -89,7 +89,6 @@ interface DashboardContextType {
   toggleSessionStatus: (sessionId: string) => void;
   updatePricing: (config: Partial<PricingConfig>) => void;
   updateAiBehavior: (config: Partial<AiBehaviorConfig>) => void;
-  addMockIncomingMessage: (patientId: string, content: string) => void;
 }
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined);
@@ -192,13 +191,6 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     fetchData();
     detectLocation();
   }, []);
-
-  // Save helpers
-  const saveToStorage = (key: string, data: any) => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(key, JSON.stringify(data));
-    }
-  };
 
   const setCurrency = (c: 'NGN' | 'USD') => {
     setCurrencyState(c);
@@ -327,7 +319,6 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       toggleSessionStatus,
       updatePricing,
       updateAiBehavior,
-      addMockIncomingMessage: () => {} 
     }}>
       {children}
     </DashboardContext.Provider>

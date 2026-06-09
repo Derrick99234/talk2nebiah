@@ -33,13 +33,13 @@ There is **no `typecheck` or `test` command**. Do not add one.
 - `cn()` utility in `src/lib/utils.ts` (clsx + tailwind-merge) for conditional classes
 
 ## Key integrations & data flow
-1. **Paystack** — User pays on the public Pricing page → Paystack calls `POST /api/payments/webhook` → Prisma creates Payment + generates 6-char hex auth token → token sent to user (TODO: email/SMS)
+1. **Paystack** — User pays on the public Pricing page → Paystack calls `POST /api/payments/webhook` → Prisma creates Payment + generates 32-char hex auth token (128-bit) → token sent to user via email
 2. **WhatsApp** — User sends token via WhatsApp → `POST /api/whatsapp/webhook` verifies token → user linked to WhatsApp number → subsequent messages handled by AI (`src/lib/ai.ts`, OpenAI-compatible, configurable endpoint)
-3. **Admin dashboard** — Fetches data from `/api/dashboard/*` endpoints. Dashboard wiring in `src/context/DashboardContext.tsx`. Behavior page passcode: `admin123` (hardcoded).
+3. **Admin dashboard** — Fetches data from `/api/dashboard/*` endpoints. Dashboard wiring in `src/context/DashboardContext.tsx`. All pages require admin login (JWT cookie).
 
 ## Prisma
 - Schema: `prisma/schema.prisma`, config: `prisma/prisma.config.ts` (v7 `defineConfig`), seed: `prisma/seed.ts`
-- `NEXT_PUBLIC_*` pricing env vars must be set at build time (read by `Pricing.tsx`)
+- `NEXT_PUBLIC_*` pricing env vars are build-time fallbacks; active values come from the database `GlobalSettings` table
 
 ## Environment
 All required vars documented in `REQUIRED_ENV_VARS.md`. Key groups:
