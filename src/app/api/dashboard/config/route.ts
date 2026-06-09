@@ -8,7 +8,6 @@ export async function GET() {
     });
 
     if (!settings) {
-      // Initialize default settings if they don't exist
       settings = await prisma.globalSettings.create({
         data: {
           id: 'current',
@@ -17,7 +16,6 @@ export async function GET() {
           monthlyNaira: 120000,
           monthlyUsd: 150,
           aiSystemPrompt: "You are Nebiah, a compassionate and professional mental health AI assistant for Talk2Nebiah.",
-          whatsappVerifyToken: 'talk2nebiah_webhook_verify_token_12345'
         }
       });
     }
@@ -35,11 +33,6 @@ export async function GET() {
         safetyThreshold: 'high',
         crisisEscalation: true
       },
-      whatsappConfig: {
-        phoneNumberId: settings.whatsappPhoneId || '',
-        accessToken: settings.whatsappToken || '',
-        webhookUrl: process.env.NEXT_PUBLIC_WHATSAPP_WEBHOOK_URL || ''
-      }
     });
   } catch (error) {
     console.error('Error fetching settings:', error);
@@ -50,7 +43,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { pricing, aiBehavior, whatsappConfig } = body;
+    const { pricing, aiBehavior } = body;
 
     const updatedSettings = await prisma.globalSettings.upsert({
       where: { id: 'current' },
@@ -60,8 +53,6 @@ export async function POST(request: Request) {
         monthlyNaira: pricing?.monthlyNaira,
         monthlyUsd: pricing?.monthlyUsd,
         aiSystemPrompt: aiBehavior?.prompt,
-        whatsappPhoneId: whatsappConfig?.phoneNumberId,
-        whatsappToken: whatsappConfig?.accessToken
       },
       create: {
         id: 'current',
@@ -70,8 +61,6 @@ export async function POST(request: Request) {
         monthlyNaira: pricing?.monthlyNaira || 120000,
         monthlyUsd: pricing?.monthlyUsd || 150,
         aiSystemPrompt: aiBehavior?.prompt || "You are Nebiah, a compassionate and professional mental health AI assistant.",
-        whatsappPhoneId: whatsappConfig?.phoneNumberId,
-        whatsappToken: whatsappConfig?.accessToken
       }
     });
 

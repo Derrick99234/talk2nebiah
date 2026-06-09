@@ -11,9 +11,11 @@ export async function GET(request: Request) {
   const token = searchParams.get('hub.verify_token');
   const challenge = searchParams.get('hub.challenge');
 
-  const VERIFY_TOKEN = process.env.WHATSAPP_WEBHOOK_VERIFY_TOKEN || 'talk2nebiah_webhook_verify_token_12345';
-
   if (mode && token) {
+    const VERIFY_TOKEN = process.env.WHATSAPP_WEBHOOK_VERIFY_TOKEN;
+    if (!VERIFY_TOKEN) {
+      return new Response('Server not configured', { status: 500 });
+    }
     if (mode === 'subscribe' && token === VERIFY_TOKEN) {
       console.log('WEBHOOK_VERIFIED');
       return new Response(challenge, { status: 200 });

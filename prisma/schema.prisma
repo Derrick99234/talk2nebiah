@@ -19,9 +19,6 @@ generator client {
    monthlyNaira     Float    @default(120000)
    monthlyUsd       Float    @default(150)
    aiSystemPrompt   String   @db.Text
-   whatsappPhoneId  String?
-   whatsappToken    String?
-   whatsappVerifyToken String?
    updatedAt        DateTime @updatedAt
  }
 

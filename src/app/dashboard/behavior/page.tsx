@@ -3,15 +3,11 @@
 import React, { useState } from 'react';
 import { useDashboard } from '@/context/DashboardContext';
 import { 
-  Lock, 
-  Unlock, 
   Brain, 
   Save, 
   Sparkles,
   Send,
   MessageSquare,
-  Bot,
-  AlertCircle
 } from 'lucide-react';
 
 interface SandboxMessage {
@@ -22,11 +18,6 @@ interface SandboxMessage {
 
 export default function BehaviorSettings() {
   const { aiBehavior, updateAiBehavior } = useDashboard();
-  
-  // Gate states
-  const [passcode, setPasscode] = useState<string>('');
-  const [isUnlocked, setIsUnlocked] = useState<boolean>(false);
-  const [errorMsg, setErrorMsg] = useState<string>('');
 
   // Form states
   const [prompt, setPrompt] = useState<string>(aiBehavior.prompt);
@@ -39,17 +30,6 @@ export default function BehaviorSettings() {
     { id: '1', sender: 'ai', content: 'Hello! I am the sandboxed AI agent running with your current settings. Type a question or struggle to test how I respond.' }
   ]);
   const [sandboxInput, setSandboxInput] = useState<string>('');
-
-  const handlePasscodeSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (passcode === 'admin123') {
-      setIsUnlocked(true);
-      setErrorMsg('');
-    } else {
-      setErrorMsg('Incorrect passcode. Please try again.');
-      setPasscode('');
-    }
-  };
 
   const handleSaveConfig = () => {
     updateAiBehavior({
@@ -113,48 +93,7 @@ export default function BehaviorSettings() {
     }, 1500);
   };
 
-  // 1. LOCKED VIEW
-  if (!isUnlocked) {
-    return (
-      <div className="flex items-center justify-center min-h-[calc(100vh-12rem)]">
-        <div className="bg-slate-900 border border-slate-800 p-8 rounded-2xl max-w-md w-full shadow-2xl text-center space-y-6">
-          <div className="w-16 h-16 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-full flex items-center justify-center mx-auto animate-pulse">
-            <Lock className="w-6 h-6" />
-          </div>
-          
-          <div className="space-y-1">
-            <h1 className="text-xl font-bold text-white">Admin Lock</h1>
-            <p className="text-slate-400 text-xs leading-relaxed">
-              This page contains sensitive AI system behaviors. Please enter the administrator passcode to view or modify AI configurations.
-            </p>
-          </div>
-
-          <form onSubmit={handlePasscodeSubmit} className="space-y-4">
-            <input 
-              type="password"
-              value={passcode}
-              onChange={(e) => setPasscode(e.target.value)}
-              placeholder="Enter Admin Passcode (admin123)"
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-center text-slate-100 placeholder:text-slate-600 focus:outline-none focus:border-rose-500"
-            />
-            {errorMsg && (
-              <p className="text-rose-400 text-xs font-semibold flex items-center justify-center gap-1">
-                <AlertCircle className="w-3.5 h-3.5" /> {errorMsg}
-              </p>
-            )}
-            <button 
-              type="submit"
-              className="w-full bg-rose-600 text-white font-bold py-3 rounded-xl hover:bg-rose-700 transition-colors shadow-lg shadow-rose-600/10 flex items-center justify-center gap-2"
-            >
-              Verify Passcode <Unlock className="w-4 h-4" />
-            </button>
-          </form>
-        </div>
-      </div>
-    );
-  }
-
-  // 2. UNLOCKED VIEW
+  // Admin-authenticated view (gate removed — dashboard layout already checks auth)
   return (
     <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 pb-12 relative">
       
@@ -167,7 +106,7 @@ export default function BehaviorSettings() {
               <span>AI System Behavior</span>
             </div>
             <span className="text-[10px] uppercase font-bold text-mint bg-mint/10 border border-mint/20 px-2 py-0.5 rounded flex items-center gap-1">
-              <Unlock className="w-2.5 h-2.5" /> Admin Access
+               Admin Access
             </span>
           </div>
 

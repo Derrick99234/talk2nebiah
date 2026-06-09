@@ -61,12 +61,6 @@ export interface AiBehaviorConfig {
   crisisEscalation: boolean;
 }
 
-export interface WhatsAppConfig {
-  phoneNumberId: string;
-  accessToken: string;
-  webhookUrl: string;
-}
-
 interface DashboardContextType {
   // Geolocation / Currency State
   currency: 'NGN' | 'USD';
@@ -83,8 +77,7 @@ interface DashboardContextType {
   // Configurations
   pricing: PricingConfig;
   aiBehavior: AiBehaviorConfig;
-  whatsappConfig: WhatsAppConfig;
-  
+
   // Actions
   sendMessage: (patientId: string, content: string, senderType: 'HUMAN' | 'AI') => void;
   togglePatientStatus: (patientId: string) => void;
@@ -92,7 +85,6 @@ interface DashboardContextType {
   toggleSessionStatus: (sessionId: string) => void;
   updatePricing: (config: Partial<PricingConfig>) => void;
   updateAiBehavior: (config: Partial<AiBehaviorConfig>) => void;
-  updateWhatsAppConfig: (config: Partial<WhatsAppConfig>) => void;
   addMockIncomingMessage: (patientId: string, content: string) => void;
 }
 
@@ -121,12 +113,6 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     crisisEscalation: true
   });
 
-  const [whatsappConfig, setWhatsappConfig] = useState<WhatsAppConfig>({
-    phoneNumberId: '',
-    accessToken: '',
-    webhookUrl: ''
-  });
-
   // Fetch data from API
   const fetchData = async () => {
     try {
@@ -141,17 +127,17 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         const configData = await configRes.json();
         setPricing(configData.pricing);
         setAiBehavior(configData.aiBehavior);
-        setWhatsappConfig(configData.whatsappConfig);
       }
 
       if (paymentsRes.ok) {
         const paymentsData = await paymentsRes.json();
-        setPayments(paymentsData);
+        setPayments(paymentsData.data || paymentsData);
       }
 
       if (convosRes.ok) {
         const convosData = await convosRes.json();
-        setSessions(convosData);
+        const sessionsData = convosData.data || convosData;
+        setSessions(sessionsData);
         
         // Extract patients and messages from sessions
         const extractedPatients: Patient[] = [];
@@ -256,7 +242,7 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       await fetch('/api/dashboard/config', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pricing: newPricing, aiBehavior, whatsappConfig })
+        body: JSON.stringify({ pricing: newPricing, aiBehavior })
       });
     } catch (error) {
       console.error('Failed to update pricing on server:', error);
@@ -270,24 +256,10 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       await fetch('/api/dashboard/config', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pricing, aiBehavior: newAiBehavior, whatsappConfig })
+        body: JSON.stringify({ pricing, aiBehavior: newAiBehavior })
       });
     } catch (error) {
       console.error('Failed to update AI behavior on server:', error);
-    }
-  };
-
-  const updateWhatsAppConfig = async (config: Partial<WhatsAppConfig>) => {
-    const newWhatsappConfig = { ...whatsappConfig, ...config };
-    setWhatsappConfig(newWhatsappConfig);
-    try {
-      await fetch('/api/dashboard/config', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pricing, aiBehavior, whatsappConfig: newWhatsappConfig })
-      });
-    } catch (error) {
-      console.error('Failed to update WhatsApp config on server:', error);
     }
   };
 
@@ -303,14 +275,12 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       payments,
       pricing,
       aiBehavior,
-      whatsappConfig,
       sendMessage,
       togglePatientStatus,
       updatePatientNotes,
       toggleSessionStatus,
       updatePricing,
       updateAiBehavior,
-      updateWhatsAppConfig,
       addMockIncomingMessage: () => {} 
     }}>
       {children}
