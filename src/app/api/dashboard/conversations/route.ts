@@ -1,10 +1,31 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import type { Prisma } from '@prisma/client';
 
-type SessionWithRelations = Prisma.SessionGetPayload<{
-  include: { user: true; messages: true }
-}>;
+interface SessionUser {
+  id: string;
+  name: string | null;
+  whatsappNumber: string | null;
+}
+
+interface SessionMessage {
+  id: string;
+  content: string | null;
+  senderType: string;
+  timestamp: Date;
+}
+
+interface SessionWithRelations {
+  id: string;
+  userId: string;
+  struggleCategory: string;
+  status: string;
+  feedbackRating: number | null;
+  notes: string | null;
+  startDate: Date;
+  resolvedDate: Date | null;
+  user: SessionUser;
+  messages: SessionMessage[];
+}
 
 export async function GET(request: Request) {
   try {
