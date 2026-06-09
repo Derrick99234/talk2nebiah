@@ -1,5 +1,10 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import type { Prisma } from '@prisma/client';
+
+type SessionWithRelations = Prisma.SessionGetPayload<{
+  include: { user: true; messages: true }
+}>;
 
 export async function GET(request: Request) {
   try {
@@ -23,7 +28,7 @@ export async function GET(request: Request) {
       prisma.session.count(),
     ]);
 
-    const formattedSessions = sessions.map(s => ({
+    const formattedSessions = sessions.map((s: SessionWithRelations) => ({
       id: s.id,
       patientId: s.userId,
       patientName: s.user.name || s.user.whatsappNumber || 'Unknown',
