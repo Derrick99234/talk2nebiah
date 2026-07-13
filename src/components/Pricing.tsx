@@ -109,11 +109,6 @@ export default function Pricing() {
     setShowModal(false);
     setLoading(selectedPlan.name);
 
-    console.log('[PAYSTACK] Key:', paystackKey.slice(0, 15) + '...');
-    console.log('[PAYSTACK] Amount:', selectedPlan.amount * 100);
-    console.log('[PAYSTACK] Currency:', currency);
-    console.log('[PAYSTACK] PaystackPop:', typeof window.PaystackPop);
-
     try {
       const handler = window.PaystackPop.setup({
         key: paystackKey,
