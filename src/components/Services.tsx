@@ -7,13 +7,6 @@ export default function Services() {
   const services = [
     {
       icon: <MessageCircle className="w-8 h-8" />,
-      title: 'One-on-One Peer Support',
-      description:
-        'We connect you with a trained mental health professional who is available to chat with you 24/7. Through confidential conversations, you can openly share what you’re going through and receive thoughtful guidance and support.',
-      color: 'bg-mint-light text-mint-dark',
-    },
-    {
-      icon: <HeartHandshake className="w-8 h-8" />,
       title: 'Chat-Based Counseling & Therapy',
       description:
         'All our counseling and therapy sessions take place via chat. During these conversations, the professional may:',
@@ -23,14 +16,7 @@ export default function Services() {
         'Help you navigate emotional challenges',
         'Recommend escalation to appropriate professional services when needed',
       ],
-      color: 'bg-blue-50 text-blue-600',
-    },
-    {
-      icon: <Users className="w-8 h-8" />,
-      title: 'Family Counseling (Chat-Based)',
-      description:
-        'We also offer family counseling sessions, conducted through chat. These sessions are designed to help families communicate better and work through challenges together. Talk2Nebiah does not operate a physical therapy platform—sessions are conducted online via chat.',
-      color: 'bg-purple-50 text-purple-600',
+      color: 'bg-mint-light text-mint-dark',
     },
     {
       icon: <BookOpen className="w-8 h-8" />,

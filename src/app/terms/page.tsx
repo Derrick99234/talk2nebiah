@@ -33,7 +33,7 @@ export default function TermsPage() {
 
             <section>
               <h2 className="text-2xl font-bold text-gray-900 mb-3">4. Payments and Refunds</h2>
-              <p>Payments are processed securely through Paystack. All prices are displayed in Naira (NGN) or US Dollars (USD). Refund requests are handled on a case-by-case basis. Please contact <a href="mailto:info@talk2nebiah.com" className="text-mint hover:underline">info@talk2nebiah.com</a> for refund inquiries.</p>
+              <p>Payments are processed securely through Paystack. All prices are displayed in Naira (NGN) or US Dollars (USD). Refund requests are handled on a case-by-case basis. Please contact <a href="mailto:talktoonebiah@gmail.com" className="text-mint hover:underline">talktoonebiah@gmail.com</a> for refund inquiries.</p>
             </section>
 
             <section>
@@ -48,7 +48,7 @@ export default function TermsPage() {
 
             <section>
               <h2 className="text-2xl font-bold text-gray-900 mb-3">7. Contact</h2>
-              <p>For questions about these terms, contact us at <a href="mailto:info@talk2nebiah.com" className="text-mint hover:underline">info@talk2nebiah.com</a>.</p>
+              <p>For questions about these terms, contact us at <a href="mailto:talktoonebiah@gmail.com" className="text-mint hover:underline">talktoonebiah@gmail.com</a>.</p>
             </section>
           </div>
         </div>

@@ -11,10 +11,12 @@ export async function GET() {
       settings = await prisma.globalSettings.create({
         data: {
           id: 'current',
-          singleNaira: 15000,
+          singleNaira: 20000,
           singleUsd: 20,
+          weeklyNaira: 59000,
+          weeklyUsd: 49.3,
           monthlyNaira: 120000,
-          monthlyUsd: 150,
+          monthlyUsd: 100,
           aiSystemPrompt: "You are Nebiah, a compassionate and professional mental health AI assistant for Talk2Nebiah.",
         }
       });
@@ -23,6 +25,8 @@ export async function GET() {
     return NextResponse.json({
       singleNaira: settings.singleNaira,
       singleUsd: settings.singleUsd,
+      weeklyNaira: settings.weeklyNaira,
+      weeklyUsd: settings.weeklyUsd,
       monthlyNaira: settings.monthlyNaira,
       monthlyUsd: settings.monthlyUsd,
     });

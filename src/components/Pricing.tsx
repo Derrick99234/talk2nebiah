@@ -14,6 +14,8 @@ declare global {
 interface PricingData {
   singleNaira: number;
   singleUsd: number;
+  weeklyNaira: number;
+  weeklyUsd: number;
   monthlyNaira: number;
   monthlyUsd: number;
 }
@@ -21,10 +23,12 @@ interface PricingData {
 export default function Pricing() {
   const { currency } = useDashboard();
   const [pricing, setPricing] = useState<PricingData>({
-    singleNaira: 15000,
+    singleNaira: 20000,
     singleUsd: 20,
+    weeklyNaira: 59000,
+    weeklyUsd: 49.3,
     monthlyNaira: 120000,
-    monthlyUsd: 150,
+    monthlyUsd: 100,
   });
   const [loading, setLoading] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
@@ -45,27 +49,39 @@ export default function Pricing() {
     fetch('/api/pricing')
       .then(res => res.ok ? res.json() : null)
       .then(data => {
-        if (data) setPricing(data);
+        if (data) setPricing(prev => ({ ...prev, ...data }));
       })
       .catch(() => {});
   }, []);
 
+  const p = pricing;
   const plans = [
     {
       name: "One Session",
+      subtitle: "1 Hour",
       price: currency === "NGN" 
-        ? `₦${pricing.singleNaira.toLocaleString()}` 
-        : `$${pricing.singleUsd}`,
-      amountVal: currency === "NGN" ? pricing.singleNaira : pricing.singleUsd,
+        ? `₦${(p.singleNaira ?? 20000).toLocaleString()}` 
+        : `$${p.singleUsd ?? 20}`,
+      amountVal: currency === "NGN" ? (p.singleNaira ?? 20000) : (p.singleUsd ?? 20),
       popular: false,
     },
     {
-      name: "Monthly Plan",
+      name: "Weekly Plan",
+      subtitle: "1 Hour Daily",
       price: currency === "NGN" 
-        ? `₦${pricing.monthlyNaira.toLocaleString()}` 
-        : `$${pricing.monthlyUsd}`,
-      amountVal: currency === "NGN" ? pricing.monthlyNaira : pricing.monthlyUsd,
+        ? `₦${(p.weeklyNaira ?? 59000).toLocaleString()}` 
+        : `$${p.weeklyUsd ?? 49.3}`,
+      amountVal: currency === "NGN" ? (p.weeklyNaira ?? 59000) : (p.weeklyUsd ?? 49.3),
       popular: true,
+    },
+    {
+      name: "Monthly Plan",
+      subtitle: "1 Hour Daily",
+      price: currency === "NGN" 
+        ? `₦${(p.monthlyNaira ?? 120000).toLocaleString()}` 
+        : `$${p.monthlyUsd ?? 100}`,
+      amountVal: currency === "NGN" ? (p.monthlyNaira ?? 120000) : (p.monthlyUsd ?? 100),
+      popular: false,
     },
   ];
 
@@ -78,33 +94,56 @@ export default function Pricing() {
     e.preventDefault();
     if (!selectedPlan || !userData.email || !userData.name) return;
 
+    const paystackKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY;
+    if (!paystackKey) {
+      alert('Paystack public key is not configured. Check your .env file.');
+      setLoading(null);
+      return;
+    }
+    if (!window.PaystackPop) {
+      alert('Paystack script failed to load. Check your network or ad blocker.');
+      setLoading(null);
+      return;
+    }
+
     setShowModal(false);
     setLoading(selectedPlan.name);
 
-    const handler = window.PaystackPop.setup({
-      key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY,
-      email: userData.email,
-      amount: selectedPlan.amount * 100, // in kobo/cents
-      currency: currency,
-      metadata: {
-        plan_name: selectedPlan.name,
-        custom_fields: [
-          {
-            display_name: "Full Name",
-            variable_name: "full_name",
-            value: userData.name
-          }
-        ]
-      },
-      callback: function(response: any) {
-        setLoading(null);
-        alert('Payment successful! Reference: ' + response.reference + '. Check your email for your WhatsApp access token.');
-      },
-      onClose: function() {
-        setLoading(null);
-      }
-    });
-    handler.openIframe();
+    console.log('[PAYSTACK] Key:', paystackKey.slice(0, 15) + '...');
+    console.log('[PAYSTACK] Amount:', selectedPlan.amount * 100);
+    console.log('[PAYSTACK] Currency:', currency);
+    console.log('[PAYSTACK] PaystackPop:', typeof window.PaystackPop);
+
+    try {
+      const handler = window.PaystackPop.setup({
+        key: paystackKey,
+        email: userData.email,
+        amount: selectedPlan.amount * 100,
+        currency: currency,
+        channels: ['card'],
+        metadata: {
+          plan_name: selectedPlan.name,
+          custom_fields: [
+            {
+              display_name: "Full Name",
+              variable_name: "full_name",
+              value: userData.name
+            }
+          ]
+        },
+        callback: function(response: any) {
+          setLoading(null);
+          alert('Payment successful! Reference: ' + response.reference + '. Check your email for your WhatsApp access token.');
+        },
+        onClose: function() {
+          setLoading(null);
+        }
+      });
+      handler.openIframe();
+    } catch (err) {
+      alert('Paystack error: ' + (err instanceof Error ? err.message : String(err)));
+      setLoading(null);
+    }
   };
 
   return (
@@ -208,7 +247,7 @@ export default function Pricing() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {plans.map((plan, index) => (
             <motion.div
               key={index}
@@ -225,15 +264,16 @@ export default function Pricing() {
                 </div>
               )}
 
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+              <h3 className="text-2xl font-bold text-gray-900 mb-1">
                 {plan.name}
               </h3>
+              <p className="text-sm text-gray-500 mb-4">{plan.subtitle}</p>
               <div className="flex items-baseline mb-8">
                 <span className="text-4xl font-extrabold text-gray-900">
                   {plan.price}
                 </span>
-                <span className="text-gray-500 ml-1">
-                  {plan.name === "Monthly Plan" ? "/month" : "/session"}
+                <span className="text-gray-500 ml-1 text-sm">
+                  {plan.name === "Monthly Plan" ? "/month" : plan.name === "Weekly Plan" ? "/week" : "/session"}
                 </span>
               </div>
 

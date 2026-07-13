@@ -60,11 +60,8 @@ export default function Contact() {
                   </div>
                   <div>
                     <h3 className="font-bold text-lg mb-1">Email Us</h3>
-                    <a href="mailto:hello@talk2nebiah.com" className="text-mint-light hover:text-white transition-colors block">
-                      hello@talk2nebiah.com
-                    </a>
-                    <a href="mailto:partnerships@talk2nebiah.com" className="text-mint-light hover:text-white transition-colors block mt-1 text-sm">
-                      partnerships@talk2nebiah.com
+                    <a href="mailto:talktoonebiah@gmail.com" className="text-mint-light hover:text-white transition-colors block">
+                      talktoonebiah@gmail.com
                     </a>
                   </div>
                 </div>

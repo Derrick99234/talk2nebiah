@@ -50,6 +50,8 @@ export interface Payment {
 export interface PricingConfig {
   singleNaira: number;
   singleUsd: number;
+  weeklyNaira: number;
+  weeklyUsd: number;
   monthlyNaira: number;
   monthlyUsd: number;
 }
@@ -104,10 +106,12 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [error, setError] = useState<string | null>(null);
 
   const [pricing, setPricing] = useState<PricingConfig>({
-    singleNaira: 15000,
+    singleNaira: 20000,
     singleUsd: 20,
+    weeklyNaira: 59000,
+    weeklyUsd: 49.3,
     monthlyNaira: 120000,
-    monthlyUsd: 150
+    monthlyUsd: 100
   });
 
   const [aiBehavior, setAiBehavior] = useState<AiBehaviorConfig>({

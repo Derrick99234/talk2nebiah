@@ -14,10 +14,12 @@ generator client {
 
  model GlobalSettings {
    id               String   @id @default("current")
-   singleNaira      Float    @default(15000)
+   singleNaira      Float    @default(20000)
    singleUsd        Float    @default(20)
+   weeklyNaira      Float    @default(59000)
+   weeklyUsd        Float    @default(49.3)
    monthlyNaira     Float    @default(120000)
-   monthlyUsd       Float    @default(150)
+   monthlyUsd       Float    @default(100)
    aiSystemPrompt   String   @db.Text
    updatedAt        DateTime @updatedAt
  }

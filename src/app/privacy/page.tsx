@@ -45,7 +45,7 @@ export default function PrivacyPage() {
 
             <section>
               <h2 className="text-2xl font-bold text-gray-900 mb-3">5. Your Rights</h2>
-              <p>You have the right to access, correct, or delete your personal data. To exercise these rights, contact us at <a href="mailto:info@talk2nebiah.com" className="text-mint hover:underline">info@talk2nebiah.com</a>.</p>
+              <p>You have the right to access, correct, or delete your personal data. To exercise these rights, contact us at <a href="mailto:talktoonebiah@gmail.com" className="text-mint hover:underline">talktoonebiah@gmail.com</a>.</p>
             </section>
 
             <section>
