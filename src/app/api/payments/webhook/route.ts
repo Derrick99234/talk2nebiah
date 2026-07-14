@@ -69,7 +69,12 @@ export async function POST(req: Request) {
       // 3. Generate Auth Token
       const authToken = await generateAuthToken(user.id);
 
-      await sendAuthTokenEmail(email, authToken.token);
+      try {
+        await sendAuthTokenEmail(email, authToken.token);
+        console.log('Auth token email sent to:', email);
+      } catch (emailErr) {
+        console.error('Failed to send auth token email:', emailErr);
+      }
     }
 
     return new NextResponse('OK', { status: 200 });
