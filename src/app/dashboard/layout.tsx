@@ -15,7 +15,8 @@ import {
   MapPin,
   Sparkles,
   ExternalLink,
-  X
+  X,
+  Menu
 } from 'lucide-react';
 
 export default function DashboardLayout({
@@ -136,7 +137,7 @@ export default function DashboardLayout({
         <header className="h-16 border-b border-slate-800 bg-slate-900/40 flex items-center justify-between px-3 md:px-6 shrink-0 gap-2">
           <div className="flex items-center gap-3 min-w-0">
             <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden p-2 bg-slate-800 rounded-lg shrink-0 cursor-pointer">
-              <Sparkles className="w-5 h-5 text-mint" />
+              <Menu className="w-5 h-5 text-mint" />
             </button>
             <h2 className="text-base md:text-lg font-bold text-white tracking-tight truncate">{getPageTitle()}</h2>
           </div>
