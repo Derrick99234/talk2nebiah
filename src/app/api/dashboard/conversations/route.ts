@@ -19,6 +19,7 @@ interface SessionWithRelations {
   userId: string;
   struggleCategory: string;
   status: string;
+  responderMode: string;
   feedbackRating: number | null;
   notes: string | null;
   startDate: Date;
@@ -55,6 +56,7 @@ export async function GET(request: Request) {
       patientName: s.user.name || s.user.whatsappNumber || 'Unknown',
       struggleCategory: s.struggleCategory,
       status: s.status,
+      responderMode: s.responderMode,
       feedbackRating: s.feedbackRating,
       notes: s.notes,
       startDate: s.startDate.toISOString(),
