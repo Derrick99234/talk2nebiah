@@ -29,6 +29,7 @@ export default function WhatsAppInbox() {
   } = useDashboard();
 
   const [activePatientId, setActivePatientId] = useState<string>('');
+  const [cachedPatient, setCachedPatient] = useState<typeof patients[0] | null>(null);
   const [inputText, setInputText] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<'ALL' | 'AI' | 'HUMAN'>('ALL');
@@ -54,8 +55,9 @@ export default function WhatsAppInbox() {
     })
     .sort((a, b) => new Date(b.lastMessageTime).getTime() - new Date(a.lastMessageTime).getTime());
 
-  // Get active patient details
-  const activePatient = patients.find(p => p.id === activePatientId) || filteredPatients[0] || patients[0];
+  // Get active patient details with cache to prevent header vanishing during refresh
+  const foundPatient = patients.find(p => p.id === activePatientId) || null;
+  const activePatient = foundPatient || cachedPatient;
 
   // Get messages for active patient
   const chatMessages = messages.filter(m => m.patientId === activePatientId);
@@ -64,6 +66,18 @@ export default function WhatsAppInbox() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatMessages]);
+
+  // Keep cached patient stable so chat header doesn't vanish during refresh
+  useEffect(() => {
+    if (foundPatient) setCachedPatient(foundPatient);
+  }, [foundPatient]);
+
+  // Scroll to bottom when opening a conversation on mobile
+  useEffect(() => {
+    if (mobileChatOpen) {
+      setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+    }
+  }, [mobileChatOpen, activePatientId]);
 
   const handleSendHuman = (e: React.FormEvent) => {
     e.preventDefault();
