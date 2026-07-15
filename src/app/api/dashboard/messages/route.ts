@@ -19,7 +19,7 @@ export async function POST(request: Request) {
       },
     });
 
-    // Send to WhatsApp user
+    // Send to WhatsApp user and switch to human mode
     const session = await prisma.session.findUnique({
       where: { id: sessionId },
       include: { user: true },
@@ -28,6 +28,12 @@ export async function POST(request: Request) {
     if (session?.user?.whatsappNumber) {
       await sendWhatsAppMessage(session.user.whatsappNumber, content);
     }
+
+    // Auto-switch to human mode so AI stops replying
+    await prisma.session.update({
+      where: { id: sessionId },
+      data: { responderMode: 'HUMAN' },
+    });
 
     return NextResponse.json({ success: true, message });
   } catch (error) {

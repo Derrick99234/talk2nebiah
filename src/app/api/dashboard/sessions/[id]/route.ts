@@ -5,11 +5,12 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   try {
     const { id } = await params;
     const body = await request.json();
-    const { status, notes } = body;
+    const { status, notes, responderMode } = body;
 
     const data: Record<string, unknown> = {};
     if (status) data.status = status;
     if (notes !== undefined) data.notes = notes;
+    if (responderMode) data.responderMode = responderMode;
     if (status === 'RESOLVED') data.resolvedDate = new Date();
 
     const session = await prisma.session.update({
