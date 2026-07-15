@@ -199,30 +199,37 @@ export default function WhatsAppInbox() {
         ) : (
           <>
             {/* Chat Header */}
-            <div className="h-16 border-b border-slate-800 flex items-center justify-between px-6 bg-slate-900/40">
-              <div className="flex items-center gap-3">
+            <div className="h-16 border-b border-slate-800 flex items-center justify-between px-3 md:px-6 bg-slate-900/40 gap-2">
+              <div className="flex items-center gap-2 md:gap-3 min-w-0">
                 <img 
                   src={activePatient.avatar} 
                   alt={activePatient.name} 
-                  className="w-10 h-10 rounded-full object-cover border border-slate-700" 
+                  className="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover border border-slate-700 shrink-0" 
                 />
-                <div>
-                  <h4 className="font-bold text-white text-sm">{activePatient.name}</h4>
-                  <p className="text-[11px] text-slate-400 flex items-center gap-1 mt-0.5 font-mono">
-                    <Phone className="w-3 h-3 text-slate-500" /> {activePatient.whatsappNumber}
+                <div className="min-w-0">
+                  <h4 className="font-bold text-white text-sm truncate">{activePatient.name}</h4>
+                  <p className="text-[11px] text-slate-400 flex items-center gap-1 mt-0.5 font-mono truncate">
+                    <Phone className="w-3 h-3 text-slate-500 shrink-0" /> {activePatient.whatsappNumber}
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3">
-                <span className="text-xs bg-slate-800 text-slate-400 px-3 py-1.5 rounded-xl border border-slate-700 font-semibold">
-                  Live Connection
+              <div className="flex items-center gap-1 md:gap-3 shrink-0">
+                <button
+                  onClick={refresh}
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all"
+                  title="Refresh conversations"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                </button>
+                <span className="text-[10px] md:text-xs bg-slate-800 text-slate-400 px-2 md:px-3 py-1 md:py-1.5 rounded-xl border border-slate-700 font-semibold">
+                  Live
                 </span>
               </div>
             </div>
 
             {/* Messaging Box Area */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-4 relative">
+            <div className="flex-1 overflow-y-auto p-3 md:p-6 space-y-4 relative">
               {/* Messages Loop */}
               {chatMessages.map((msg) => {
                 const isPatient = msg.senderType === 'PATIENT';
@@ -233,7 +240,7 @@ export default function WhatsAppInbox() {
                     key={msg.id} 
                     className={`flex flex-col ${isPatient ? 'items-start' : 'items-end'}`}
                   >
-                    <div className={`max-w-[70%] rounded-2xl px-4 py-3 text-sm ${
+                    <div className={`max-w-[85%] md:max-w-[70%] rounded-2xl px-3 md:px-4 py-2.5 md:py-3 text-sm ${
                       isPatient 
                         ? 'bg-slate-800 text-slate-100 rounded-tl-none' 
                         : isAi 
@@ -282,17 +289,17 @@ export default function WhatsAppInbox() {
             </div>
 
             {/* Input Bar Form */}
-            <form onSubmit={handleSendHuman} className="p-4 bg-slate-900/40 border-t border-slate-800 flex gap-3 items-center">
+            <form onSubmit={handleSendHuman} className="p-3 md:p-4 bg-slate-900/40 border-t border-slate-800 flex gap-2 md:gap-3 items-center">
               <input 
                 type="text" 
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 placeholder={`Type a message to reply as operator...`}
-                className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-3.5 text-sm text-slate-200 focus:outline-none focus:border-mint transition-all"
+                className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 md:px-4 py-3 md:py-3.5 text-sm text-slate-200 focus:outline-none focus:border-mint transition-all"
               />
               <button 
                 type="submit"
-                className="bg-mint text-white p-3.5 rounded-xl hover:bg-mint-dark transition-all shadow-lg shadow-mint/10 shrink-0"
+                className="bg-mint text-white p-3 md:p-3.5 rounded-xl hover:bg-mint-dark transition-all shadow-lg shadow-mint/10 shrink-0"
               >
                 <Send className="w-4 h-4" />
               </button>

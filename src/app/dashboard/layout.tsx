@@ -131,26 +131,26 @@ export default function DashboardLayout({
       <main className="flex-1 flex flex-col h-full overflow-hidden">
         
         {/* TOP HEADER */}
-        <header className="h-16 border-b border-slate-800 bg-slate-900/40 flex items-center justify-between px-6 shrink-0">
-          <div className="flex items-center gap-4">
-            <div className="lg:hidden p-2 bg-slate-800 rounded-lg">
+        <header className="h-16 border-b border-slate-800 bg-slate-900/40 flex items-center justify-between px-3 md:px-6 shrink-0 gap-2">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="lg:hidden p-2 bg-slate-800 rounded-lg shrink-0">
               <Sparkles className="w-5 h-5 text-mint" />
             </div>
-            <h2 className="text-lg font-bold text-white tracking-tight">{getPageTitle()}</h2>
+            <h2 className="text-base md:text-lg font-bold text-white tracking-tight truncate">{getPageTitle()}</h2>
           </div>
 
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-2 md:gap-6 shrink-0">
             
-            <div className="flex items-center gap-3 bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-full text-xs">
+            <div className="hidden md:flex items-center gap-3 bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-full text-xs">
               <div className="flex items-center gap-1.5 text-slate-400">
                 <MapPin className="w-3.5 h-3.5 text-mint" />
-                <span>Detected: <strong className="text-slate-200">{detectedCountry}</strong></span>
+                <span className="hidden lg:inline">Detected: </span><strong className="text-slate-200">{detectedCountry}</strong>
               </div>
               
               <div className="h-3 w-px bg-slate-850"></div>
               
               <div className="flex items-center gap-1">
-                <span className="text-slate-500 mr-1">Currency Override:</span>
+                <span className="text-slate-500 mr-1 hidden lg:inline">Currency:</span>
                 <button 
                   onClick={() => setCurrency('NGN')}
                   className={`px-2 py-0.5 rounded-md font-bold transition-all ${
@@ -159,7 +159,7 @@ export default function DashboardLayout({
                       : 'text-slate-400 hover:text-slate-100'
                   }`}
                 >
-                  ₦ NGN
+                  ₦
                 </button>
                 <button 
                   onClick={() => setCurrency('USD')}
@@ -169,17 +169,17 @@ export default function DashboardLayout({
                       : 'text-slate-400 hover:text-slate-100'
                   }`}
                 >
-                  $ USD
+                  $
                 </button>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <div className="text-right">
+            <div className="flex items-center gap-2 md:gap-3">
+              <div className="text-right hidden sm:block">
                 <p className="text-sm font-semibold text-white">{adminEmail?.split('@')[0] || 'Admin'}</p>
                 <p className="text-[10px] text-slate-500">Administrator</p>
               </div>
-              <div className="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 overflow-hidden flex items-center justify-center">
+              <div className="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 overflow-hidden flex items-center justify-center shrink-0">
                 <span className="text-sm font-bold text-mint">{initials}</span>
               </div>
             </div>
@@ -187,7 +187,7 @@ export default function DashboardLayout({
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto bg-slate-950 p-8">
+        <main className="flex-1 overflow-y-auto bg-slate-950 p-4 md:p-6 lg:p-8">
           <div className="max-w-7xl mx-auto h-full">
             {children}
           </div>

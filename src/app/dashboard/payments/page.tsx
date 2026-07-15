@@ -112,7 +112,7 @@ export default function PaymentsConsole() {
         {/* PAYMENTS LIST CONTAINER */}
         <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-x-auto shadow-xl">
           
-          <div className="p-4 border-b border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 min-w-[800px]">
+          <div className="p-4 border-b border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
             <h3 className="font-bold text-white text-base">Transactions Ledger</h3>
             
             <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
@@ -156,35 +156,35 @@ export default function PaymentsConsole() {
             </div>
           </div>
 
-          <table className="w-full text-left border-collapse min-w-[800px]">
+          <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-slate-800 bg-slate-850/50 text-[10px] uppercase font-bold text-slate-400 tracking-wider">
-                <th className="p-4 pl-6 text-xs">Date</th>
-                <th className="p-4 text-xs">Patient</th>
-                <th className="p-4 text-xs">Plan</th>
-                <th className="p-4 text-xs">Amount</th>
-                <th className="p-4 text-xs">Billing Origin</th>
-                <th className="p-4 pr-6 text-xs">Status</th>
+                <th className="p-3 md:p-4 md:pl-6 text-xs">Date</th>
+                <th className="p-3 md:p-4 text-xs">Patient</th>
+                <th className="p-3 md:p-4 text-xs hidden sm:table-cell">Plan</th>
+                <th className="p-3 md:p-4 text-xs">Amount</th>
+                <th className="p-3 md:p-4 text-xs hidden md:table-cell">Billing Origin</th>
+                <th className="p-3 md:p-4 md:pr-6 text-xs">Status</th>
               </tr>
             </thead>
             
             <tbody className="divide-y divide-slate-800/60">
               {filteredPayments.map((pay) => (
                 <tr key={pay.id} className="hover:bg-slate-800/10 text-sm text-slate-300">
-                  <td className="p-4 pl-6 font-mono text-xs text-slate-500">
+                  <td className="p-3 md:p-4 md:pl-6 font-mono text-xs text-slate-500">
                     {new Date(pay.date).toLocaleDateString()}
                   </td>
-                  <td className="p-4 font-semibold text-slate-200">{pay.patientName}</td>
-                  <td className="p-4 text-xs font-semibold text-slate-400">{pay.planName}</td>
-                  <td className="p-4 font-mono font-bold text-slate-200">
+                  <td className="p-3 md:p-4 font-semibold text-slate-200">{pay.patientName}</td>
+                  <td className="p-3 md:p-4 text-xs font-semibold text-slate-400 hidden sm:table-cell">{pay.planName}</td>
+                  <td className="p-3 md:p-4 font-mono font-bold text-slate-200">
                     {pay.currency === 'NGN' ? `₦${pay.amount.toLocaleString()}` : `$${pay.amount.toLocaleString()}`}
                   </td>
-                  <td className="p-4 text-xs text-slate-400">
+                  <td className="p-3 md:p-4 text-xs text-slate-400 hidden md:table-cell">
                     <span className="flex items-center gap-1">
                       <MapPin className="w-3.5 h-3.5 text-mint" /> {pay.geoCountry}
                     </span>
                   </td>
-                  <td className="p-4 pr-6">{getStatusIcon(pay.status)}</td>
+                  <td className="p-3 md:p-4 md:pr-6">{getStatusIcon(pay.status)}</td>
                 </tr>
               ))}
 

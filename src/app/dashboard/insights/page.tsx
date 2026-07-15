@@ -58,9 +58,9 @@ export default function InsightsTracker() {
     <div className="space-y-6 pb-12 relative">
       
       {/* HEADER SECTION */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-white">Insights & Feedback</h1>
+          <h1 className="text-xl md:text-2xl font-bold text-white">Insights & Feedback</h1>
           <p className="text-slate-400 text-xs mt-1">Track active peer support sessions, feedback, and resolution states.</p>
         </div>
 
@@ -84,34 +84,34 @@ export default function InsightsTracker() {
 
       {/* SESSIONS TABLE */}
       <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-x-auto shadow-xl">
-        <table className="w-full text-left border-collapse min-w-[800px]">
+        <table className="w-full text-left border-collapse">
           <thead>
             <tr className="border-b border-slate-800 bg-slate-850/50 text-[10px] uppercase font-bold text-slate-400 tracking-wider">
-              <th className="p-4 pl-6">Start Date</th>
-              <th className="p-4">Patient</th>
-              <th className="p-4">Struggle Category</th>
-              <th className="p-4">Feedback Rating</th>
-              <th className="p-4">Session Notes</th>
-              <th className="p-4">Status</th>
-              <th className="p-4 pr-6 text-right">Actions</th>
+              <th className="p-3 md:p-4 md:pl-6">Start Date</th>
+              <th className="p-3 md:p-4">Patient</th>
+              <th className="p-3 md:p-4 hidden md:table-cell">Struggle Category</th>
+              <th className="p-3 md:p-4 hidden sm:table-cell">Feedback</th>
+              <th className="p-3 md:p-4 hidden lg:table-cell">Session Notes</th>
+              <th className="p-3 md:p-4">Status</th>
+              <th className="p-3 md:p-4 md:pr-6 text-right">Actions</th>
             </tr>
           </thead>
           
           <tbody className="divide-y divide-slate-800/60">
             {filteredSessions.map((session) => (
               <tr key={session.id} className="hover:bg-slate-800/20 text-sm text-slate-300">
-                <td className="p-4 pl-6 font-mono text-xs text-slate-500">{session.startDate}</td>
-                <td className="p-4 font-semibold text-slate-200">{session.patientName}</td>
-                <td className="p-4 text-xs font-medium text-slate-400">
+                <td className="p-3 md:p-4 md:pl-6 font-mono text-xs text-slate-500">{session.startDate}</td>
+                <td className="p-3 md:p-4 font-semibold text-slate-200">{session.patientName}</td>
+                <td className="p-3 md:p-4 text-xs font-medium text-slate-400 hidden md:table-cell">
                   <span className="bg-slate-950 px-2.5 py-1 rounded-md border border-slate-850">
                     {session.struggleCategory}
                   </span>
                 </td>
-                <td className="p-4">{renderStars(session.feedbackRating)}</td>
-                <td className="p-4 max-w-xs truncate text-xs text-slate-500">
+                <td className="p-3 md:p-4 hidden sm:table-cell">{renderStars(session.feedbackRating)}</td>
+                <td className="p-3 md:p-4 max-w-xs truncate text-xs text-slate-500 hidden lg:table-cell">
                   {session.notes || 'No summary notes added.'}
                 </td>
-                <td className="p-4">
+                <td className="p-3 md:p-4">
                   <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${
                     session.status === 'RESOLVED' 
                       ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/10' 
@@ -121,7 +121,7 @@ export default function InsightsTracker() {
                     {session.status === 'RESOLVED' ? 'Resolved' : 'Ongoing'}
                   </span>
                 </td>
-                <td className="p-4 pr-6 text-right space-x-2">
+                <td className="p-3 md:p-4 md:pr-6 text-right space-x-1 md:space-x-2">
                   
                   {/* Note edit trigger */}
                   <button 
@@ -135,13 +135,13 @@ export default function InsightsTracker() {
                   {/* Resolve / Reopen toggle button */}
                   <button 
                     onClick={() => toggleSessionStatus(session.id)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                    className={`px-2 md:px-3 py-1.5 rounded-lg text-[10px] md:text-xs font-bold transition-all ${
                       session.status === 'RESOLVED'
                         ? 'bg-slate-950 border border-slate-800 text-slate-400 hover:bg-slate-850 hover:text-slate-200'
                         : 'bg-mint text-white hover:bg-mint-dark shadow-md shadow-mint/10'
                     }`}
                   >
-                    {session.status === 'RESOLVED' ? 'Reopen Session' : 'Resolve Session'}
+                    {session.status === 'RESOLVED' ? 'Reopen' : 'Resolve'}
                   </button>
 
                 </td>
