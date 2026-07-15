@@ -32,16 +32,9 @@ export default function WhatsAppInbox() {
   const [inputText, setInputText] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<'ALL' | 'AI' | 'HUMAN'>('ALL');
+  const [mobileChatOpen, setMobileChatOpen] = useState(false);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const chatContainerRef = useRef<HTMLDivElement>(null);
-
-  // Update active patient when patients load
-  useEffect(() => {
-    if (patients.length > 0 && !activePatientId) {
-      setActivePatientId(patients[0].id);
-    }
-  }, [patients, activePatientId]);
 
   const filteredPatients = patients
     .filter(p => {
@@ -65,6 +58,13 @@ export default function WhatsAppInbox() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatMessages]);
 
+  // Scroll to bottom when opening chat on mobile
+  useEffect(() => {
+    if (mobileChatOpen) {
+      setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+    }
+  }, [mobileChatOpen]);
+
   const handleSendHuman = (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputText.trim() || !activePatientId) return;
@@ -86,7 +86,7 @@ export default function WhatsAppInbox() {
     <div className="flex flex-col lg:flex-row h-[calc(100vh-8rem)] bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
       
       {/* 1. CHAT LIST SIDEBAR */}
-      <div className="w-full lg:w-80 border-b lg:border-b-0 lg:border-r border-slate-800 flex flex-col bg-slate-900/60 shrink-0 lg:h-full max-h-[40vh] lg:max-h-none" id="chat-sidebar">
+      <div className={`w-full lg:w-80 border-b lg:border-b-0 lg:border-r border-slate-800 flex flex-col bg-slate-900/60 shrink-0 lg:flex h-full ${mobileChatOpen ? 'hidden' : 'flex'}`}>
         <div className="p-4 border-b border-slate-800 space-y-3">
           <div className="flex items-center justify-between">
             <h3 className="font-bold text-white text-base">WhatsApp Chats</h3>
@@ -140,10 +140,7 @@ export default function WhatsAppInbox() {
             return (
               <button
                 key={patient.id}
-                onClick={() => {
-                  setActivePatientId(patient.id);
-                  chatContainerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }}
+                onClick={() => { setActivePatientId(patient.id); setMobileChatOpen(true); }}
                 className={`w-full p-4 text-left transition-all flex gap-3 hover:bg-slate-800/40 ${
                   isSelected ? 'bg-slate-800/80' : ''
                 }`}
@@ -190,7 +187,7 @@ export default function WhatsAppInbox() {
       </div>
 
       {/* 2. MAIN CHAT WINDOW */}
-      <div ref={chatContainerRef} className="flex-1 flex flex-col justify-between bg-slate-950 min-h-0">
+      <div className={`flex-1 flex-col justify-between bg-slate-950 lg:flex ${mobileChatOpen ? 'flex' : 'hidden'}`}>
         {!activePatient ? (
           <div className="flex-1 flex flex-col items-center justify-center text-slate-500 space-y-4">
             <div className="w-20 h-20 bg-slate-900 rounded-full flex items-center justify-center border border-slate-800">
@@ -207,7 +204,7 @@ export default function WhatsAppInbox() {
             <div className="h-16 border-b border-slate-800 flex items-center justify-between px-3 md:px-6 bg-slate-900/40 gap-2">
               <div className="flex items-center gap-2 md:gap-3 min-w-0">
                 <button
-                  onClick={() => document.getElementById('chat-sidebar')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                  onClick={() => setMobileChatOpen(false)}
                   className="lg:hidden p-1.5 -ml-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all"
                   title="Back to conversations"
                 >
