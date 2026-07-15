@@ -14,7 +14,8 @@ import {
   LogOut,
   MapPin,
   Sparkles,
-  ExternalLink
+  ExternalLink,
+  X
 } from 'lucide-react';
 
 export default function DashboardLayout({
@@ -24,6 +25,7 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname();
   const { currency, setCurrency, detectedCountry } = useDashboard();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [adminEmail, setAdminEmail] = useState('');
   const [checking, setChecking] = useState(true);
 
@@ -133,9 +135,9 @@ export default function DashboardLayout({
         {/* TOP HEADER */}
         <header className="h-16 border-b border-slate-800 bg-slate-900/40 flex items-center justify-between px-3 md:px-6 shrink-0 gap-2">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="lg:hidden p-2 bg-slate-800 rounded-lg shrink-0">
+            <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden p-2 bg-slate-800 rounded-lg shrink-0 cursor-pointer">
               <Sparkles className="w-5 h-5 text-mint" />
-            </div>
+            </button>
             <h2 className="text-base md:text-lg font-bold text-white tracking-tight truncate">{getPageTitle()}</h2>
           </div>
 
@@ -193,6 +195,75 @@ export default function DashboardLayout({
           </div>
         </main>
       </main>
+
+      {/* MOBILE DRAWER OVERLAY */}
+      {mobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* MOBILE DRAWER */}
+      <aside className={`fixed top-0 left-0 h-full w-72 bg-slate-900 border-r border-slate-800 z-50 flex flex-col justify-between transform transition-transform duration-300 lg:hidden ${
+        mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}>
+        <div>
+          <div className="p-6 border-b border-slate-800 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-mint-dark to-mint flex items-center justify-center shadow-lg shadow-mint/20">
+                <Sparkles className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h1 className="text-lg font-bold text-white tracking-tight leading-none">Talk2Nebiah</h1>
+                <span className="text-xs text-mint font-medium tracking-wide">ADMIN CONSOLE</span>
+              </div>
+            </div>
+            <button onClick={() => setMobileMenuOpen(false)} className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          <nav className="p-4 space-y-1">
+            {navigation.map((item) => {
+              const Icon = item.icon;
+              const isActive = pathname === item.href;
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+                    isActive 
+                      ? 'bg-mint text-white shadow-md shadow-mint/10' 
+                      : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100'
+                  }`}
+                >
+                  <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                  {item.name}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+
+        <div className="p-4 border-t border-slate-800 space-y-2">
+          <Link
+            href="/"
+            onClick={() => setMobileMenuOpen(false)}
+            className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-400 hover:bg-slate-800/60 hover:text-slate-100 transition-all"
+          >
+            <ExternalLink className="w-5 h-5" />
+            Public Website
+          </Link>
+          <div className="flex items-center justify-between px-4 py-3 text-xs text-slate-500 border-t border-slate-800/60 pt-4">
+            <span className="font-mono">v1.0.0</span>
+            <button onClick={handleLogout} className="flex items-center gap-1 hover:text-rose-400 transition-colors cursor-pointer">
+              <LogOut className="w-3.5 h-3.5" /> Log out
+            </button>
+          </div>
+        </div>
+      </aside>
     </div>
   );
 }
