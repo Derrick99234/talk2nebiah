@@ -187,7 +187,7 @@ export default function WhatsAppInbox() {
       </div>
 
       {/* 2. MAIN CHAT WINDOW */}
-      <div className={`flex-1 flex-col justify-between bg-slate-950 lg:flex min-h-0 ${mobileChatOpen ? 'flex' : 'hidden'}`}>
+      <div className={`flex-1 flex flex-col justify-between bg-slate-950 lg:flex min-h-0 ${mobileChatOpen ? 'flex' : 'hidden'}`}>
         {!activePatient ? (
           <div className="flex-1 flex flex-col items-center justify-center text-slate-500 space-y-4">
             <div className="w-20 h-20 bg-slate-900 rounded-full flex items-center justify-center border border-slate-800">
