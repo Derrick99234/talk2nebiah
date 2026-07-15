@@ -65,20 +65,21 @@ generator client {
    @@index([userId])
  }
 
- model Session {
-   id               String    @id @default(cuid())
-   userId           String
-   user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-   struggleCategory String
-   status           String    @default("ONGOING") // 'ONGOING' | 'RESOLVED'
-   feedbackRating   Int?
-   notes            String?
-   startDate        DateTime  @default(now())
-   resolvedDate     DateTime?
-   messages         Message[]
+  model Session {
+    id               String    @id @default(cuid())
+    userId           String
+    user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    struggleCategory String
+    status           String    @default("ONGOING") // 'ONGOING' | 'RESOLVED'
+    responderMode    String    @default("AI") // 'AI' | 'HUMAN'
+    feedbackRating   Int?
+    notes            String?
+    startDate        DateTime  @default(now())
+    resolvedDate     DateTime?
+    messages         Message[]
 
-   @@index([userId])
- }
+    @@index([userId])
+  }
 
  model Message {
    id         String   @id @default(cuid())

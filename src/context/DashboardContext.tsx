@@ -158,9 +158,9 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             const patient: Patient = {
               id: session.patientId,
               name: session.patientName,
-              whatsappNumber: '', // Would need to fetch separately or include in API
+              whatsappNumber: '',
               activeStruggle: session.struggleCategory,
-              status: 'AI_RESPONDING', // Default
+              status: session.responderMode === 'HUMAN' ? 'HUMAN_OPERATOR' : 'AI_RESPONDING',
               avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(session.patientName)}&background=random`,
               lastMessage: lastMsg?.content || 'No messages',
               lastMessageTime: lastMsg ? new Date(lastMsg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
@@ -241,8 +241,27 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const togglePatientStatus = async (patientId: string) => {
-    const newStatus = patients.find(p => p.id === patientId)?.status === 'AI_RESPONDING' ? 'HUMAN_OPERATOR' : 'AI_RESPONDING';
+    const patient = patients.find(p => p.id === patientId);
+    if (!patient) return;
+
+    const newMode = patient.status === 'AI_RESPONDING' ? 'HUMAN' : 'AI';
+    const newStatus = newMode === 'HUMAN' ? 'HUMAN_OPERATOR' : 'AI_RESPONDING';
+
     setPatients(prev => prev.map(p => p.id === patientId ? { ...p, status: newStatus } : p));
+
+    const session = sessions.find(s => s.patientId === patientId && s.status === 'ONGOING');
+    if (!session) return;
+
+    try {
+      await fetch(`/api/dashboard/sessions/${session.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ responderMode: newMode }),
+      });
+    } catch (error) {
+      console.error('Failed to toggle responder mode:', error);
+      setError('Failed to update responder mode');
+    }
   };
 
   const updatePatientNotes = async (sessionId: string, notes: string) => {

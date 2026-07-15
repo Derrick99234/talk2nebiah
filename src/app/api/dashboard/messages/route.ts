@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { sendWhatsAppMessage } from '@/lib/whatsapp';
 
 export async function POST(request: Request) {
   try {
@@ -17,6 +18,16 @@ export async function POST(request: Request) {
         senderType: senderType || 'HUMAN',
       },
     });
+
+    // Send to WhatsApp user
+    const session = await prisma.session.findUnique({
+      where: { id: sessionId },
+      include: { user: true },
+    });
+
+    if (session?.user?.whatsappNumber) {
+      await sendWhatsAppMessage(session.user.whatsappNumber, content);
+    }
 
     return NextResponse.json({ success: true, message });
   } catch (error) {

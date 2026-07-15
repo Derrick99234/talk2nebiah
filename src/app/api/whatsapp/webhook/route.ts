@@ -137,6 +137,12 @@ export async function POST(request: Request) {
           },
         });
 
+        // Check if session is in human-operator mode
+        if (session.responderMode === 'HUMAN') {
+          console.log('[WEBHOOK] Session in HUMAN mode — skipping AI response');
+          return NextResponse.json({ status: 'success', mode: 'human' });
+        }
+
         // Get history for AI
         const history = await prisma.message.findMany({
           where: { sessionId: session.id },
