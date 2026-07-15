@@ -326,7 +326,7 @@ export default function WhatsAppInbox() {
                   </button>
                 </div>
                 <p className="text-[10px] text-slate-500 leading-relaxed">
-                  When activated, Gemini will automatically answer incoming WhatsApp messages using the behavior specifications. Typing a manual message automatically overrides this to human operation.
+                  When activated, AI will automatically answer incoming WhatsApp messages using the behavior specifications. Typing a manual message automatically overrides this to human operation.
                 </p>
               </div>
             </div>
