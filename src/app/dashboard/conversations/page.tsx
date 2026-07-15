@@ -13,7 +13,9 @@ import {
   Sparkles,
   Zap,
   AlertCircle,
-  Search
+  Search,
+  Check,
+  Loader,
 } from 'lucide-react';
 
 export default function WhatsAppInbox() {
@@ -21,7 +23,8 @@ export default function WhatsAppInbox() {
     patients, 
     messages, 
     sendMessage, 
-    togglePatientStatus, 
+    togglePatientStatus,
+    refresh,
   } = useDashboard();
 
   const [activePatientId, setActivePatientId] = useState<string>('');
@@ -38,14 +41,16 @@ export default function WhatsAppInbox() {
     }
   }, [patients, activePatientId]);
 
-  const filteredPatients = patients.filter(p => {
-    const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                         p.whatsappNumber.includes(searchQuery);
-    const matchesFilter = filterStatus === 'ALL' || 
-                         (filterStatus === 'AI' && p.status === 'AI_RESPONDING') ||
-                         (filterStatus === 'HUMAN' && p.status === 'HUMAN_OPERATOR');
-    return matchesSearch && matchesFilter;
-  });
+  const filteredPatients = patients
+    .filter(p => {
+      const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                           p.whatsappNumber.includes(searchQuery);
+      const matchesFilter = filterStatus === 'ALL' || 
+                           (filterStatus === 'AI' && p.status === 'AI_RESPONDING') ||
+                           (filterStatus === 'HUMAN' && p.status === 'HUMAN_OPERATOR');
+      return matchesSearch && matchesFilter;
+    })
+    .sort((a, b) => new Date(b.lastMessageTime).getTime() - new Date(a.lastMessageTime).getTime());
 
   // Get active patient details
   const activePatient = patients.find(p => p.id === activePatientId) || filteredPatients[0] || patients[0];
@@ -83,9 +88,18 @@ export default function WhatsAppInbox() {
         <div className="p-4 border-b border-slate-800 space-y-3">
           <div className="flex items-center justify-between">
             <h3 className="font-bold text-white text-base">WhatsApp Chats</h3>
-            <span className="text-xs bg-slate-850 px-2 py-0.5 rounded text-slate-400 font-semibold">
-              {filteredPatients.length} active
-            </span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={refresh}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all"
+                title="Refresh conversations"
+              >
+                <RotateCcw className="w-4 h-4" />
+              </button>
+              <span className="text-xs bg-slate-850 px-2 py-0.5 rounded text-slate-400 font-semibold">
+                {filteredPatients.length} active
+              </span>
+            </div>
           </div>
           
           {/* Search bar */}
@@ -242,6 +256,16 @@ export default function WhatsAppInbox() {
                         </span>
                       )}
                       <span>{formatTime(msg.timestamp)}</span>
+                      {/* Status indicator for operator messages */}
+                      {!isPatient && !isAi && msg.status === 'sending' && (
+                        <Loader className="w-3 h-3 text-yellow-400 animate-spin" />
+                      )}
+                      {!isPatient && !isAi && msg.status === 'sent' && (
+                        <Check className="w-3 h-3 text-slate-500" />
+                      )}
+                      {!isPatient && !isAi && msg.status === 'failed' && (
+                        <AlertCircle className="w-3 h-3 text-red-400" />
+                      )}
                     </div>
                   </div>
                 );

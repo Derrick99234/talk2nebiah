@@ -21,6 +21,7 @@ export interface Message {
   content: string;
   senderType: 'PATIENT' | 'AI' | 'HUMAN';
   timestamp: string;
+  status?: 'sending' | 'sent' | 'failed';
 }
 
 export interface Session {
@@ -85,6 +86,7 @@ interface DashboardContextType {
   aiBehavior: AiBehaviorConfig;
 
   // Actions
+  refresh: () => Promise<void>;
   sendMessage: (patientId: string, content: string, senderType: 'HUMAN' | 'AI') => void;
   togglePatientStatus: (patientId: string) => void;
   updatePatientNotes: (sessionId: string, notes: string) => void;
@@ -219,23 +221,49 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const sendMessage = async (patientId: string, content: string, senderType: 'HUMAN' | 'AI') => {
+    const session = sessions.find(s => s.patientId === patientId && s.status === 'ONGOING');
+    if (!session) {
+      console.error('No active session found for patient', patientId);
+      return;
+    }
+
+    const tempId = `temp-${Date.now()}`;
+    const optimistic: Message = {
+      id: tempId,
+      patientId,
+      content,
+      senderType,
+      timestamp: new Date().toISOString(),
+      status: 'sending',
+    };
+
+    setMessages(prev => [...prev, optimistic]);
+
     try {
-      // Find the active session for this patient
-      const session = sessions.find(s => s.patientId === patientId && s.status === 'ONGOING');
-      if (!session) {
-        console.error('No active session found for patient', patientId);
-        return;
-      }
       const res = await fetch('/api/dashboard/messages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ sessionId: session.id, content, senderType }),
       });
+
       if (res.ok) {
+        const data = await res.json();
+        setMessages(prev => prev.map(m =>
+          m.id === tempId
+            ? { ...m, id: data.message.id, status: 'sent' as const }
+            : m
+        ));
         fetchData();
+      } else {
+        setMessages(prev => prev.map(m =>
+          m.id === tempId ? { ...m, status: 'failed' as const } : m
+        ));
       }
     } catch (error) {
       console.error('Failed to send message:', error);
+      setMessages(prev => prev.map(m =>
+        m.id === tempId ? { ...m, status: 'failed' as const } : m
+      ));
       setError('Failed to send message');
     }
   };
@@ -336,6 +364,7 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       error,
       pricing,
       aiBehavior,
+      refresh: fetchData,
       sendMessage,
       togglePatientStatus,
       updatePatientNotes,
