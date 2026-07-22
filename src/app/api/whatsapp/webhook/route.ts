@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifyToken, markTokenAsUsed } from '@/lib/token';
 import { sendWhatsAppMessage } from '@/lib/whatsapp';
-import { generateAIResponse, SYSTEM_PROMPT } from '@/lib/ai';
+import { generateAIResponse, DEFAULT_SYSTEM_PROMPT } from '@/lib/ai';
 import { checkRateLimit } from '@/lib/rate-limit';
 
 // GET verification check from Meta / WhatsApp Business setup
@@ -150,8 +150,13 @@ export async function POST(request: Request) {
           take: 10, // Last 10 messages
         });
 
+        // Fetch system prompt from DB (editable via admin settings)
+        const settings = await prisma.globalSettings.findUnique({ where: { id: 'current' } });
+        const systemPrompt = settings?.aiSystemPrompt || DEFAULT_SYSTEM_PROMPT;
+        console.log('[WEBHOOK] Using prompt source:', settings?.aiSystemPrompt ? 'DB' : 'DEFAULT');
+
         const aiMessages = [
-          { role: 'system' as const, content: SYSTEM_PROMPT },
+          { role: 'system' as const, content: systemPrompt },
           ...history.map((m: { senderType: string; transcript: string | null; content: string | null }) => ({
             role: (m.senderType === 'PATIENT' ? 'user' : 'assistant') as 'user' | 'assistant',
             content: m.transcript || m.content || '',
@@ -160,6 +165,12 @@ export async function POST(request: Request) {
 
         // Generate AI Response
         const aiResponse = await generateAIResponse(aiMessages);
+        console.log('[WEBHOOK] AI response length:', aiResponse.length, 'preview:', aiResponse.slice(0, 60));
+
+        if (!aiResponse) {
+          console.log('[WEBHOOK] AI returned empty — skipping send and store');
+          return NextResponse.json({ status: 'success', mode: 'ai_empty' });
+        }
 
         // Send AI Response via WhatsApp
         await sendWhatsAppMessage(from, aiResponse);

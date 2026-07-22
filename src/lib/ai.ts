@@ -2,10 +2,18 @@ const AI_API_KEY = process.env.AI_API_KEY;
 const AI_MODEL = process.env.AI_MODEL || 'gpt-4o';
 const AI_ENDPOINT = process.env.AI_ENDPOINT || 'https://api.openai.com/v1/chat/completions';
 
+export const DEFAULT_SYSTEM_PROMPT = `
+You are Nebiah, a compassionate and professional mental health AI assistant for Talk2Nebiah. 
+Your goal is to provide a safe, judgment-free space for users to share their feelings.
+Be empathetic, supportive, and practical. 
+If a user expresses thoughts of self-harm or severe crisis, gently encourage them to seek professional help and provide resources.
+Keep responses concise and suitable for WhatsApp.
+`;
+
 export async function generateAIResponse(messages: { role: 'system' | 'user' | 'assistant', content: string }[]) {
   if (!AI_API_KEY) {
     console.error('AI API Key missing');
-    return "I'm sorry, I'm having trouble connecting to my brain right now. Please try again later.";
+    return '';
   }
 
   try {
@@ -23,17 +31,14 @@ export async function generateAIResponse(messages: { role: 'system' | 'user' | '
     });
 
     const data = await response.json();
-    return data.choices[0].message.content;
+    const content = data.choices?.[0]?.message?.content;
+    if (!content) {
+      console.error('[AI] Empty content from model:', JSON.stringify(data));
+      return '';
+    }
+    return content;
   } catch (error) {
     console.error('AI Generation error:', error);
-    return "I'm sorry, I encountered an error while processing your request.";
+    return '';
   }
 }
-
-export const SYSTEM_PROMPT = `
-You are Nebiah, a compassionate and professional mental health AI assistant for Talk2Nebiah. 
-Your goal is to provide a safe, judgment-free space for users to share their feelings.
-Be empathetic, supportive, and practical. 
-If a user expresses thoughts of self-harm or severe crisis, gently encourage them to seek professional help and provide resources.
-Keep responses concise and suitable for WhatsApp.
-`;
