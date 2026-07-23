@@ -165,6 +165,9 @@ export async function POST(request: Request) {
           })),
         ];
 
+        // Deliberate delay before AI responds
+        await new Promise(r => setTimeout(r, 5000));
+
         // Generate AI Response
         const aiResponse = await generateAIResponse(aiMessages);
         console.log('[WEBHOOK] AI response length:', aiResponse.length, 'preview:', aiResponse.slice(0, 60));
