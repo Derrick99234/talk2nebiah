@@ -25,5 +25,10 @@ export async function sendWhatsAppMessage(to: string, text: string) {
   });
 
   const data = await response.json();
+  if (!response.ok) {
+    console.error('[WHATSAPP] API error:', response.status, JSON.stringify(data));
+  } else {
+    console.log('[WHATSAPP] Message sent successfully to', to, 'message_id:', data?.messages?.[0]?.id);
+  }
   return data;
 }

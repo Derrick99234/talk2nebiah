@@ -100,13 +100,15 @@ export async function POST(request: Request) {
                 },
               });
               await markTokenAsUsed(authToken.id);
-              await sendWhatsAppMessage(from, `Welcome to Talk2Nebiah, ${user.name || 'friend'}! Your access has been verified. How can I help you today?`);
+              const welcomeResult = await sendWhatsAppMessage(from, `Welcome to Talk2Nebiah, ${user.name || 'friend'}! Your access has been verified. How can I help you today?`);
+              if (!welcomeResult) console.log('[WEBHOOK] Welcome send returned null (credentials missing)');
               return NextResponse.json({ status: 'success' });
             }
           }
 
           // If not a valid token and user doesn't exist
-          await sendWhatsAppMessage(from, "Hello! To access Talk2Nebiah, please provide the access token you received after your payment at talk2nebiah.com. If you haven't subscribed yet, please visit our website.");
+          const tokenMsgResult = await sendWhatsAppMessage(from, "Hello! To access Talk2Nebiah, please provide the access token you received after your payment at talk2nebiah.com. If you haven't subscribed yet, please visit our website.");
+          if (!tokenMsgResult) console.log('[WEBHOOK] Token-request send returned null (credentials missing)');
           return NextResponse.json({ status: 'success' });
         }
 
@@ -173,7 +175,8 @@ export async function POST(request: Request) {
         }
 
         // Send AI Response via WhatsApp
-        await sendWhatsAppMessage(from, aiResponse);
+        const aiMsgResult = await sendWhatsAppMessage(from, aiResponse);
+        if (!aiMsgResult) console.log('[WEBHOOK] AI send returned null (credentials missing)');
 
         // Store AI Response
         await prisma.message.create({
