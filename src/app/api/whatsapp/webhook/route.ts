@@ -166,7 +166,7 @@ export async function POST(request: Request) {
         ];
 
         // Deliberate delay before AI responds
-        await new Promise(r => setTimeout(r, 5000));
+        await new Promise(r => setTimeout(r, 7000));
 
         // Generate AI Response
         const aiResponse = await generateAIResponse(aiMessages);
