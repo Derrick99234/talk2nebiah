@@ -178,13 +178,22 @@ export async function POST(request: Request) {
         const settings = await prisma.globalSettings.findUnique({ where: { id: 'current' } });
         const systemPrompt = settings?.aiSystemPrompt ?? '';
 
-        const aiMessages = [
-          { role: 'system' as const, content: systemPrompt },
-          ...history.map((m: { senderType: string; transcript: string | null; content: string | null }) => ({
+        const aiMessages: { role: 'system' | 'user' | 'assistant'; content: string }[] = [];
+
+        if (systemPrompt) {
+          aiMessages.push({ role: 'system', content: systemPrompt });
+        }
+
+        for (const m of history) {
+          const content = m.transcript || m.content;
+          if (!content) continue; // skip empty messages
+          aiMessages.push({
             role: (m.senderType === 'PATIENT' ? 'user' : 'assistant') as 'user' | 'assistant',
-            content: m.transcript || m.content || '',
-          })),
-        ];
+            content,
+          });
+        }
+
+        console.log('[WEBHOOK] aiMessages count:', aiMessages.length);
 
         // Deliberate delay before AI responds
         await new Promise(r => setTimeout(r, 7000));
