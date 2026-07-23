@@ -66,7 +66,30 @@ export async function POST(req: Request) {
         },
       });
 
-      // 3. Generate Auth Token
+      // 3. Update user plan
+      const now = new Date();
+      let expiresAt: Date | null = null;
+
+      if (planName === 'Weekly') {
+        expiresAt = user.planExpiresAt && user.planExpiresAt > now
+          ? new Date(user.planExpiresAt.getTime() + 7 * 24 * 60 * 60 * 1000)
+          : new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+      } else if (planName === 'Monthly') {
+        expiresAt = user.planExpiresAt && user.planExpiresAt > now
+          ? new Date(user.planExpiresAt.getTime() + 30 * 24 * 60 * 60 * 1000)
+          : new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+      }
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          planName,
+          planExpiresAt: expiresAt,
+          planActivatedAt: null,
+        },
+      });
+
+      // 4. Generate Auth Token
       const authToken = await generateAuthToken(user.id);
 
       try {

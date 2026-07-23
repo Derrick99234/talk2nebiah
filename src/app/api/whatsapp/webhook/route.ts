@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifyToken, markTokenAsUsed } from '@/lib/token';
 import { sendWhatsAppMessage } from '@/lib/whatsapp';
-import { generateAIResponse, DEFAULT_SYSTEM_PROMPT } from '@/lib/ai';
+import { generateAIResponse } from '@/lib/ai';
 import { checkRateLimit } from '@/lib/rate-limit';
 
 // GET verification check from Meta / WhatsApp Business setup
@@ -112,7 +112,29 @@ export async function POST(request: Request) {
           return NextResponse.json({ status: 'success' });
         }
 
-        // 3. Authorized User - Process Message
+        // 3. Check plan access
+        const now = new Date();
+
+        if (!user.planName) {
+          await sendWhatsAppMessage(from, "You don't have an active plan. Please visit talk2nebiah.com to purchase access.");
+          return NextResponse.json({ status: 'success', reason: 'no_plan' });
+        }
+
+        // Single plan — activate on first message
+        if (!user.planExpiresAt) {
+          const expiresAt = new Date(now.getTime() + 60 * 60 * 1000); // +1 hour
+          user = await prisma.user.update({
+            where: { id: user.id },
+            data: { planActivatedAt: now, planExpiresAt: expiresAt },
+          });
+        }
+
+        if (user.planExpiresAt! < now) {
+          await sendWhatsAppMessage(from, "Your Talk2Nebiah session has ended. Please visit talk2nebiah.com to purchase a new plan.");
+          return NextResponse.json({ status: 'success', reason: 'expired' });
+        }
+
+        // 4. Authorized User - Process Message
         // Get or create active session
         let session = await prisma.session.findFirst({
           where: { userId: user.id, status: 'ONGOING' },
@@ -154,8 +176,7 @@ export async function POST(request: Request) {
 
         // Fetch system prompt from DB (editable via admin settings)
         const settings = await prisma.globalSettings.findUnique({ where: { id: 'current' } });
-        const systemPrompt = settings?.aiSystemPrompt || DEFAULT_SYSTEM_PROMPT;
-        console.log('[WEBHOOK] Using prompt source:', settings?.aiSystemPrompt ? 'DB' : 'DEFAULT');
+        const systemPrompt = settings?.aiSystemPrompt ?? '';
 
         const aiMessages = [
           { role: 'system' as const, content: systemPrompt },

@@ -24,18 +24,21 @@ generator client {
    updatedAt        DateTime @updatedAt
  }
 
- model User {
-   id             String    @id @default(cuid())
-   name           String?
-   email          String?   @unique
-   whatsappNumber String?   @unique
-   avatar         String?
-   createdAt      DateTime  @default(now())
-   updatedAt      DateTime  @updatedAt
-   payments       Payment[]
-   sessions       Session[]
-   authTokens     AuthToken[]
- }
+  model User {
+    id               String    @id @default(cuid())
+    name             String?
+    email            String?   @unique
+    whatsappNumber   String?   @unique
+    avatar           String?
+    planName         String?
+    planExpiresAt    DateTime?
+    planActivatedAt  DateTime?
+    createdAt        DateTime  @default(now())
+    updatedAt        DateTime  @updatedAt
+    payments         Payment[]
+    sessions         Session[]
+    authTokens       AuthToken[]
+  }
 
  model AuthToken {
    id        String   @id @default(cuid())
