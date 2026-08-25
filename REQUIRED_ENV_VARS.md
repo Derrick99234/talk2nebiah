@@ -4,7 +4,7 @@
 - `DATABASE_URL`: PostgreSQL connection string (e.g., `postgresql://user:password@localhost:5432/talk2nebiah`)
 
 ## Paystack (Payment Gateway)
-- `NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY`: Your Paystack Public Key (public, bundled in frontend)
+- `PAYSTACK_PUBLIC_KEY`: Your Paystack Public Key (public, bundled in frontend)
 - `PAYSTACK_SECRET_KEY`: Your Paystack Secret Key (server-side only, webhook verification)
 
 ## WhatsApp Business API

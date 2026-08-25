@@ -94,7 +94,7 @@ export default function Pricing() {
     e.preventDefault();
     if (!selectedPlan || !userData.email || !userData.name) return;
 
-    const paystackKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY;
+    const paystackKey = process.env.PAYSTACK_PUBLIC_KEY;
     if (!paystackKey) {
       alert('Paystack public key is not configured. Check your .env file.');
       setLoading(null);
