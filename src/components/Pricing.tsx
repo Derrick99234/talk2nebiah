@@ -18,6 +18,7 @@ interface PricingData {
   weeklyUsd: number;
   monthlyNaira: number;
   monthlyUsd: number;
+  paystackPublicKey?: string | null;
 }
 
 export default function Pricing() {
@@ -34,6 +35,7 @@ export default function Pricing() {
   const [showModal, setShowModal] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<{name: string, amount: number} | null>(null);
   const [userData, setUserData] = useState({ name: "", email: "" });
+  const paystackKey = pricing.paystackPublicKey || process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || process.env.PAYSTACK_PUBLIC_KEY || null;
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -94,9 +96,8 @@ export default function Pricing() {
     e.preventDefault();
     if (!selectedPlan || !userData.email || !userData.name) return;
 
-    const paystackKey = process.env.PAYSTACK_PUBLIC_KEY;
     if (!paystackKey) {
-      alert('Paystack public key is not configured. Check your .env file.');
+      alert('Paystack public key is not configured. Check your Vercel env (PAYSTACK_PUBLIC_KEY or NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY) and redeploy.');
       setLoading(null);
       return;
     }
@@ -168,7 +169,7 @@ export default function Pricing() {
                     <CreditCard className="w-8 h-8 text-mint" />
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900">Finalize Subscription</h3>
-                  <p className="text-gray-500 text-sm mt-1">You're subscribing to the <span className="text-mint font-semibold">{selectedPlan?.name}</span></p>
+                  <p className="text-gray-500 text-sm mt-1">You&quos;re subscribing to the <span className="text-mint font-semibold">{selectedPlan?.name}</span></p>
                 </div>
 
                 <form onSubmit={handlePaystack} className="space-y-4">
@@ -212,7 +213,7 @@ export default function Pricing() {
                   </button>
 
                   <p className="text-[10px] text-center text-gray-400 leading-relaxed px-4">
-                    By clicking the button above, you agree to our terms of service and will be redirected to Paystack's secure payment gateway.
+                    By clicking the button above, you agree to our terms of service and will be redirected to Paystack&quos;s secure payment gateway.
                   </p>
                 </form>
               </motion.div>

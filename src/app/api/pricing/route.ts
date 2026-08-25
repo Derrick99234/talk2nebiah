@@ -29,6 +29,7 @@ export async function GET() {
       weeklyUsd: settings.weeklyUsd,
       monthlyNaira: settings.monthlyNaira,
       monthlyUsd: settings.monthlyUsd,
+      paystackPublicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || process.env.PAYSTACK_PUBLIC_KEY || null,
     });
   } catch (error) {
     console.error('Error fetching pricing:', error);
