@@ -9,10 +9,6 @@ export default function SettingsConsole() {
 
   const [singleNaira, setSingleNaira] = React.useState(pricing.singleNaira);
   const [singleUsd, setSingleUsd] = React.useState(pricing.singleUsd);
-  const [weeklyNaira, setWeeklyNaira] = React.useState(pricing.weeklyNaira);
-  const [weeklyUsd, setWeeklyUsd] = React.useState(pricing.weeklyUsd);
-  const [monthlyNaira, setMonthlyNaira] = React.useState(pricing.monthlyNaira);
-  const [monthlyUsd, setMonthlyUsd] = React.useState(pricing.monthlyUsd);
   const [saveSuccess, setSaveSuccess] = React.useState(false);
 
   const handleSavePricing = (e: React.FormEvent) => {
@@ -20,10 +16,6 @@ export default function SettingsConsole() {
     updatePricing({
       singleNaira,
       singleUsd,
-      weeklyNaira,
-      weeklyUsd,
-      monthlyNaira,
-      monthlyUsd,
     });
     setSaveSuccess(true);
     setTimeout(() => setSaveSuccess(false), 3000);
@@ -52,26 +44,7 @@ export default function SettingsConsole() {
             <input type="number" value={singleUsd} onChange={e => setSingleUsd(Number(e.target.value))}
               className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-5 py-4 text-sm text-slate-200 font-mono focus:outline-none focus:border-mint focus:ring-4 focus:ring-mint/5 transition-all" />
           </div>
-          <div className="space-y-2">
-            <label className="text-xs text-slate-400 font-bold uppercase tracking-widest block ml-1">Weekly Plan (NGN)</label>
-            <input type="number" value={weeklyNaira} onChange={e => setWeeklyNaira(Number(e.target.value))}
-              className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-5 py-4 text-sm text-slate-200 font-mono focus:outline-none focus:border-mint focus:ring-4 focus:ring-mint/5 transition-all" />
-          </div>
-          <div className="space-y-2">
-            <label className="text-xs text-slate-400 font-bold uppercase tracking-widest block ml-1">Weekly Plan (USD)</label>
-            <input type="number" value={weeklyUsd} onChange={e => setWeeklyUsd(Number(e.target.value))}
-              className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-5 py-4 text-sm text-slate-200 font-mono focus:outline-none focus:border-mint focus:ring-4 focus:ring-mint/5 transition-all" />
-          </div>
-          <div className="space-y-2">
-            <label className="text-xs text-slate-400 font-bold uppercase tracking-widest block ml-1">Monthly Plan (NGN)</label>
-            <input type="number" value={monthlyNaira} onChange={e => setMonthlyNaira(Number(e.target.value))}
-              className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-5 py-4 text-sm text-slate-200 font-mono focus:outline-none focus:border-mint focus:ring-4 focus:ring-mint/5 transition-all" />
-          </div>
-          <div className="space-y-2">
-            <label className="text-xs text-slate-400 font-bold uppercase tracking-widest block ml-1">Monthly Plan (USD)</label>
-            <input type="number" value={monthlyUsd} onChange={e => setMonthlyUsd(Number(e.target.value))}
-              className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-5 py-4 text-sm text-slate-200 font-mono focus:outline-none focus:border-mint focus:ring-4 focus:ring-mint/5 transition-all" />
-          </div>
+
           <div className="md:col-span-2 pt-2">
             <button type="submit"
               className="w-full md:w-auto bg-mint hover:bg-mint-dark text-white font-bold px-10 py-4 rounded-2xl text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-mint/20 active:scale-[0.98]">

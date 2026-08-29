@@ -14,10 +14,6 @@ declare global {
 interface PricingData {
   singleNaira: number;
   singleUsd: number;
-  weeklyNaira: number;
-  weeklyUsd: number;
-  monthlyNaira: number;
-  monthlyUsd: number;
   paystackPublicKey?: string | null;
 }
 
@@ -26,10 +22,6 @@ export default function Pricing() {
   const [pricing, setPricing] = useState<PricingData>({
     singleNaira: 20000,
     singleUsd: 20,
-    weeklyNaira: 59000,
-    weeklyUsd: 49.3,
-    monthlyNaira: 120000,
-    monthlyUsd: 100,
   });
   const [loading, setLoading] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
@@ -65,25 +57,7 @@ export default function Pricing() {
         ? `₦${(p.singleNaira ?? 20000).toLocaleString()}` 
         : `$${p.singleUsd ?? 20}`,
       amountVal: currency === "NGN" ? (p.singleNaira ?? 20000) : (p.singleUsd ?? 20),
-      popular: false,
-    },
-    {
-      name: "Weekly Plan",
-      subtitle: "1 Hour Daily",
-      price: currency === "NGN" 
-        ? `₦${(p.weeklyNaira ?? 59000).toLocaleString()}` 
-        : `$${p.weeklyUsd ?? 49.3}`,
-      amountVal: currency === "NGN" ? (p.weeklyNaira ?? 59000) : (p.weeklyUsd ?? 49.3),
       popular: true,
-    },
-    {
-      name: "Monthly Plan",
-      subtitle: "1 Hour Daily",
-      price: currency === "NGN" 
-        ? `₦${(p.monthlyNaira ?? 120000).toLocaleString()}` 
-        : `$${p.monthlyUsd ?? 100}`,
-      amountVal: currency === "NGN" ? (p.monthlyNaira ?? 120000) : (p.monthlyUsd ?? 100),
-      popular: false,
     },
   ];
 
@@ -243,7 +217,7 @@ export default function Pricing() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div className="flex justify-center max-w-md mx-auto">
           {plans.map((plan, index) => (
             <motion.div
               key={index}
@@ -252,13 +226,11 @@ export default function Pricing() {
               viewport={{ once: true }}
               transition={{ delay: index * 0.1, duration: 0.5 }}
               whileHover={{ y: -10 }}
-              className={`relative bg-white rounded-2xl p-8 border ${plan.popular ? "border-mint shadow-xl ring-4 ring-mint/10" : "border-gray-200 shadow-lg"} flex flex-col`}
+              className="relative bg-white rounded-2xl p-8 border border-mint shadow-xl ring-4 ring-mint/10 flex flex-col w-full"
             >
-              {plan.popular && (
-                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-mint text-white px-4 py-1 rounded-full text-sm font-bold shadow-md">
-                  Most Popular
-                </div>
-              )}
+              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-mint text-white px-4 py-1 rounded-full text-sm font-bold shadow-md">
+                Most Popular
+              </div>
 
               <h3 className="text-2xl font-bold text-gray-900 mb-1">
                 {plan.name}
@@ -269,7 +241,7 @@ export default function Pricing() {
                   {plan.price}
                 </span>
                 <span className="text-gray-500 ml-1 text-sm">
-                  {plan.name === "Monthly Plan" ? "/month" : plan.name === "Weekly Plan" ? "/week" : "/session"}
+                  /session
                 </span>
               </div>
 
@@ -278,11 +250,7 @@ export default function Pricing() {
                 onClick={() => handleSubscribeClick(plan.name, plan.amountVal)}
                 className={`w-full py-4 rounded-xl font-bold transition-all shadow-md hover:shadow-lg ${
                   loading === plan.name ? "opacity-50 cursor-not-allowed" : ""
-                } ${
-                  plan.popular
-                    ? "bg-mint text-white hover:bg-mint-dark"
-                    : "bg-gray-50 text-gray-900 hover:bg-gray-100"
-                }`}
+                } bg-mint text-white hover:bg-mint-dark`}
               >
                 {loading === plan.name ? "Processing..." : "Subscribe"}
               </button>

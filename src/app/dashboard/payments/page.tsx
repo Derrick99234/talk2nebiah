@@ -23,8 +23,6 @@ export default function PaymentsConsole() {
   // Price form states
   const [singleNaira, setSingleNaira] = useState<number>(pricing.singleNaira);
   const [singleUsd, setSingleUsd] = useState<number>(pricing.singleUsd);
-  const [monthlyNaira, setMonthlyNaira] = useState<number>(pricing.monthlyNaira);
-  const [monthlyUsd, setMonthlyUsd] = useState<number>(pricing.monthlyUsd);
   
   const [saveSuccess, setSaveSuccess] = useState<boolean>(false);
 
@@ -61,8 +59,6 @@ export default function PaymentsConsole() {
     updatePricing({
       singleNaira: Number(singleNaira),
       singleUsd: Number(singleUsd),
-      monthlyNaira: Number(monthlyNaira),
-      monthlyUsd: Number(monthlyUsd)
     });
     setSaveSuccess(true);
     setTimeout(() => setSaveSuccess(false), 3000);
@@ -238,31 +234,7 @@ export default function PaymentsConsole() {
               </div>
             </div>
 
-            {/* 2. Monthly Subscription Pricing */}
-            <div className="space-y-3 bg-slate-950 p-4 rounded-xl border border-slate-850">
-              <span className="text-xs text-slate-300 font-bold uppercase tracking-wider">Monthly Plan Price</span>
-              
-              <div className="grid grid-cols-2 gap-4 mt-2">
-                <div>
-                  <label className="text-[10px] text-slate-500 uppercase font-semibold">Naira (₦)</label>
-                  <input 
-                    type="number"
-                    value={monthlyNaira}
-                    onChange={(e) => setMonthlyNaira(Number(e.target.value))}
-                    className="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-sm text-slate-100 font-mono mt-1 focus:outline-none focus:border-mint"
-                  />
-                </div>
-                <div>
-                  <label className="text-[10px] text-slate-500 uppercase font-semibold">USD ($)</label>
-                  <input 
-                    type="number"
-                    value={monthlyUsd}
-                    onChange={(e) => setMonthlyUsd(Number(e.target.value))}
-                    className="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-sm text-slate-100 font-mono mt-1 focus:outline-none focus:border-mint"
-                  />
-                </div>
-              </div>
-            </div>
+
 
             <button 
               type="submit"

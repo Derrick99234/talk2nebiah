@@ -13,10 +13,6 @@ export async function GET() {
           id: 'current',
           singleNaira: 20000,
           singleUsd: 20,
-          weeklyNaira: 59000,
-          weeklyUsd: 49.3,
-          monthlyNaira: 120000,
-          monthlyUsd: 100,
           aiSystemPrompt: "You are Nebiah, a compassionate and professional mental health AI assistant for Talk2Nebiah.",
         }
       });
@@ -25,11 +21,7 @@ export async function GET() {
     return NextResponse.json({
       pricing: {
         singleNaira: settings.singleNaira,
-        singleUsd: settings.singleUsd,
-        weeklyNaira: settings.weeklyNaira,
-        weeklyUsd: settings.weeklyUsd,
-        monthlyNaira: settings.monthlyNaira,
-        monthlyUsd: settings.monthlyUsd
+        singleUsd: settings.singleUsd
       },
       aiBehavior: {
         prompt: settings.aiSystemPrompt,
@@ -53,10 +45,6 @@ export async function POST(request: Request) {
     if (pricing) {
       if (pricing.singleNaira !== undefined) updateData.singleNaira = pricing.singleNaira;
       if (pricing.singleUsd !== undefined) updateData.singleUsd = pricing.singleUsd;
-      if (pricing.weeklyNaira !== undefined) updateData.weeklyNaira = pricing.weeklyNaira;
-      if (pricing.weeklyUsd !== undefined) updateData.weeklyUsd = pricing.weeklyUsd;
-      if (pricing.monthlyNaira !== undefined) updateData.monthlyNaira = pricing.monthlyNaira;
-      if (pricing.monthlyUsd !== undefined) updateData.monthlyUsd = pricing.monthlyUsd;
     }
     if (aiBehavior?.prompt !== undefined) updateData.aiSystemPrompt = aiBehavior.prompt;
 
@@ -67,10 +55,6 @@ export async function POST(request: Request) {
         id: 'current',
         singleNaira: pricing?.singleNaira || 20000,
         singleUsd: pricing?.singleUsd || 20,
-        weeklyNaira: pricing?.weeklyNaira || 59000,
-        weeklyUsd: pricing?.weeklyUsd || 49.3,
-        monthlyNaira: pricing?.monthlyNaira || 120000,
-        monthlyUsd: pricing?.monthlyUsd || 100,
         aiSystemPrompt: aiBehavior?.prompt || "You are Nebiah, a compassionate and professional mental health AI assistant.",
       }
     });

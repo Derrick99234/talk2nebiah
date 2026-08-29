@@ -66,25 +66,12 @@ export async function POST(req: Request) {
         },
       });
 
-      // 3. Update user plan
-      const now = new Date();
-      let expiresAt: Date | null = null;
-
-      if (planName === 'Weekly') {
-        expiresAt = user.planExpiresAt && user.planExpiresAt > now
-          ? new Date(user.planExpiresAt.getTime() + 7 * 24 * 60 * 60 * 1000)
-          : new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
-      } else if (planName === 'Monthly') {
-        expiresAt = user.planExpiresAt && user.planExpiresAt > now
-          ? new Date(user.planExpiresAt.getTime() + 30 * 24 * 60 * 60 * 1000)
-          : new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
-      }
-
+      // 3. Update user plan - Single Session only (1hr, activated on first WhatsApp message)
       await prisma.user.update({
         where: { id: user.id },
         data: {
-          planName,
-          planExpiresAt: expiresAt,
+          planName: 'Single Session',
+          planExpiresAt: null,
           planActivatedAt: null,
         },
       });

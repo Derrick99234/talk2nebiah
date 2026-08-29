@@ -34,5 +34,3 @@
 ## Pricing (build-time defaults — DB overrides at runtime)
 - `NEXT_PUBLIC_SINGLE_NAIRA`: Default one-session price in Naira
 - `NEXT_PUBLIC_SINGLE_USD`: Default one-session price in USD
-- `NEXT_PUBLIC_MONTHLY_NAIRA`: Default monthly plan price in Naira
-- `NEXT_PUBLIC_MONTHLY_USD`: Default monthly plan price in USD

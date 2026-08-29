@@ -47,5 +47,5 @@ All required vars documented in `REQUIRED_ENV_VARS.md`. Key groups:
 - `WHATSAPP_*` (Phone ID, Access Token, Verify Token)
 - `PAYSTACK_*` / `NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY`
 - `AI_API_KEY`, `AI_MODEL`, `AI_ENDPOINT` (OpenAI-compatible)
-- `NEXT_PUBLIC_SINGLE_*`, `NEXT_PUBLIC_MONTHLY_*` (pricing)
+- `NEXT_PUBLIC_SINGLE_*` (single-session pricing)
 - `.env` is gitignored — never commit secrets
