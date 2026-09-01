@@ -89,8 +89,7 @@ export default function Pricing() {
         key: paystackKey,
         email: userData.email,
         amount: selectedPlan.amount * 100,
-        currency: currency,
-        channels: ['card'],
+        currency: paystackKey.startsWith('pk_test_') ? 'NGN' : currency,
         metadata: {
           plan_name: selectedPlan.name,
           custom_fields: [
