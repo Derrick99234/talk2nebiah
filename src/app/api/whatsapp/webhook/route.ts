@@ -167,12 +167,13 @@ export async function POST(request: Request) {
           return NextResponse.json({ status: 'success', mode: 'human' });
         }
 
-        // Get history for AI
-        const history = await prisma.message.findMany({
+        // Get history for AI (most recent 10 messages in chronological order)
+        const recentMessages = await prisma.message.findMany({
           where: { sessionId: session.id },
-          orderBy: { timestamp: 'asc' },
-          take: 10, // Last 10 messages
+          orderBy: { timestamp: 'desc' },
+          take: 10,
         });
+        const history = recentMessages.reverse();
 
         // Fetch system prompt from DB (editable via admin settings)
         const settings = await prisma.globalSettings.findUnique({ where: { id: 'current' } });
@@ -190,6 +191,19 @@ export async function POST(request: Request) {
           aiMessages.push({
             role: (m.senderType === 'PATIENT' ? 'user' : 'assistant') as 'user' | 'assistant',
             content,
+          });
+        }
+
+        // Ensure conversation does not end on an assistant turn (required by Gemini / LLM providers)
+        while (aiMessages.length > 0 && aiMessages[aiMessages.length - 1].role === 'assistant') {
+          aiMessages.pop();
+        }
+
+        // Guarantee that the latest patient message is present at the end
+        if (aiMessages.length === 0 || aiMessages[aiMessages.length - 1].role !== 'user') {
+          aiMessages.push({
+            role: 'user',
+            content: transcript || text,
           });
         }
 
